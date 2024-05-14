@@ -1,0 +1,50 @@
+{% extends "_base.html.j2" %}
+{% import 'macros.html.j2' as macros with context %}
+
+{% block head -%}
+    <title>Memoria - Search Your History</title>
+{%- endblock %}
+
+{% block additional_head %}
+    <style>
+        {% include "index.css" %}
+    </style>
+    <script>
+        {# htmx.logAll(); #}
+        function resetToIndex() {
+            console.log('resetToIndex');
+            htmx.removeClass(htmx.find('#content'), 'has-results');
+            const search = htmx.find('#search');
+            search.removeAttribute('hx-swap');
+            search.setAttribute('hx-trigger', 'submit delay:500ms');
+        }
+        function onAddResults() {
+            console.log('onAddResults()');
+            htmx.addClass(htmx.find('#content'), 'has-results');
+            htmx.find('#search').removeAttribute('hx-trigger');
+        }
+    </script>
+{% endblock %}
+
+{% block body_attrs %}hx-on:htmx:history-restore="if (event.detail.path === '/') { resetToIndex(); } else if(event.detail.path.startsWith('/?q=')) { onAddResults(); }"{% endblock %}
+
+{% block content_attrs%}class="{%if items%}has-results{%endif%}"{%endblock%}
+
+{% block content %}
+    <div></div>
+    <div id="controls">
+        <img id="splash" src="{{ url_for('static', path='/splash.png') }}">
+        <h1>Memoria</h1>
+        <form id="search" hx-post="{{ url_for('api_search') }}" hx-target="#results" {% if items %}hx-swap="innerHTML swap:250ms"{% else %}hx-on:submit="onAddResults();" hx-trigger="submit delay:500ms" {%endif%}>
+            <input type="search" name="query" id="search-box" placeholder="Search..." required autofocus>
+            <button type="submit">
+                <img class="icon" src="{{ url_for('static', path='/icons/search.svg') }}" height="1" width="1" alt="Search..." />
+            </button>
+        </form>
+    </div>
+    <div id="results" {% if not items %}hx-on:htmx:after-swap="htmx.find('#search').setAttribute('hx-swap', 'innerHTML swap:250ms');"{% endif %}>
+        {% if items -%}
+            {% include "results.html.j2" %}
+        {%- endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,2 @@
+<p>Importing {{"{:,}".format(count)}} {{type}} history entries out of {{"{:,}".format(total)}} total{% if filtered or too_soon %} ({% if filtered %}{{"{:,}".format(filtered)}} were filtered out by allow/deny lists{% endif %}{% if filtered and too_soon %}, and {% endif %}{% if too_soon %}{{"{:,}".format(too_soon)}} have already been scraped within the last day{% endif %}){% endif %}.</p>
+<p>They will be imported in the background.</p>

@@ -1,0 +1,53 @@
+{% extends "_base.html.j2" %}
+{% block title %}History{% endblock %}
+
+{% block additional_head -%}
+<style>
+#history-table {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto auto auto auto;
+}
+#table-header {
+    border-bottom: 2px solid #999;
+    font-weight: bold;
+}
+#table-header, #table-body, .table-row {
+    display: grid;
+    grid-column: 1 / 6;
+    grid-template-columns: subgrid;
+}
+:is(#table-header, .table-row) > * {
+    padding: 0.5ex 0.5em;
+}
+{# .table-row > :nth-child(1) { font-size: larger; } #}
+:is(#table-header, .table-row) > * { align-content: center;}
+.table-row > :not(:first-child) { border-left: 1px solid #ddd; }
+:is(#table-header, .table-row) > :nth-child(2) { grid-column: 2; text-align: center; }
+:is(#table-header, .table-row) > :nth-child(3) { grid-column: 3; text-align: center; }
+:is(#table-header, .table-row) > :nth-child(4) { grid-column: 4; text-align: center; }
+:is(#table-header, .table-row) > :nth-child(5) { grid-column: 5; text-align: center; }
+
+.history-item > small {
+    color: black;
+}
+
+#indicator {
+    display: block;
+    margin: 1em auto;
+}
+</style>
+{%- endblock%}
+
+{% block content %}
+<div></div>
+<div>
+    <h1>History</h1>
+    <div id="history-table">
+        <div id="table-header"><div>Site</div><div>Last Visited</div><div>Last Scraped</div></div>
+        <div id="table-body" hx-indicator="#indicator" hx-get="{{ url_for('api_history') }}?limit=100" hx-trigger="load once"></div>
+    </div>
+    <img id="indicator" class="htmx-indicator" src="{{ url_for('static', path='/oval.svg')}}" width="38" alt="" />
+</div>
+<div></div>
+{% endblock %}

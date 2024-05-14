@@ -1,0 +1,28 @@
+<ul>
+    {% for result in items %}
+    <li>
+        {% if result.favicon %}
+            <img width="18px" height="18px" onerror="this.style.opacity = 0;" src="{{ result.favicon }}">
+        {%endif%}
+        <a href="{{ result.url }}" class="title" title="{{ result.title }}" target="_blank">
+            <span class="{% if (result.title | trim | length) > 75 %}trunc{%endif%}">{{ result.title | trim | truncate(75, end='') }}</span> <em>{{ result.basename }}</em>
+        </a>
+        {% if result.description %} 
+        <blockquote class="description" title="{{result.description}}">
+            {{ result.description | trim | truncate(120, end='…') }}{% if result.author %} <cite>&horbar;{{result.author}}</cite>{% endif %}
+        </blockquote>
+        {% endif %}
+        <div class="scores">
+            <span class="score bold">{{ "{:.0%}".format(result.score) }}</span> match{% if result.explanation %}:&nbsp;
+                {% for term, subscore in result.explanation.items() %}
+                    <b class="pill">{{term}}</b><span class="score">&times;{{"{0:.0%}".format(subscore)}}</span>
+                {%endfor%}
+            {%endif%}
+        </div>
+        {# <details>
+            <summary>Preview...</summary>
+            <div class="preview" hx-get="/api/v1/preview/{{ result.id | urlencode }}" hx-target="this" hx-trigger="intersect once"></div>
+        </details> #}
+    </li>
+    {% endfor %}
+</ul>

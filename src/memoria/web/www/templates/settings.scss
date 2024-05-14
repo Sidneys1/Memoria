@@ -1,0 +1,120 @@
+#sources-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+
+    div.sep {
+        width: 0;
+        margin: 0 0.25em;
+        height: 1em;
+        // translate: 0 var(--icons-translate);
+        border-left: 1px solid black;
+    }
+
+    form {
+        display: inline-block;
+
+        input[type="file"] {
+            display: none;
+        }
+        
+        label[for="upload"] {
+            cursor: pointer;
+            display: block;
+            button {
+                pointer-events: none;
+            }
+        }
+    }
+}
+
+#lists-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+}
+
+#progress-dialog {
+    progress {
+        width: 100%;
+    }
+}
+
+#help-dialog {
+    button.moz {
+        pointer-events: none;
+        appearance: none;
+        color: rgb(21, 20, 26);
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background-color: color(srgb 0.0823529 0.0784314 0.101961 / 0.07);
+        font-weight: 400;
+        text-decoration: none;
+        font-size: 1em;
+    }
+}
+
+#allowlist-table {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr;
+
+    > .table-footer {
+        border-top: 2px solid #999;
+        grid-column: 1 / 4;
+        > a {
+            display: block;
+            margin: 0 auto;
+            text-align: center;
+        }
+    }
+
+    > .table-header {
+        border-bottom: 2px solid #999;
+        font-weight: bold;
+    }
+    > .table-header, .table-body, .table-row {
+        display: grid;
+        grid-column: 1 / 4;
+        grid-template-columns: subgrid;
+    }
+
+    :is(.table-header, .table-row) > * {
+        padding: 0.5ex 0.5em;
+    }
+
+    :is(.table-header, .table-row) > * { align-content: center;}
+    .table-row > :not(:first-child) { border-left: 1px solid #c1c1c1; }
+    :is(.table-header, .table-row) > :nth-child(2) { grid-column: 2; }
+    
+    .table-row > :nth-child(1) { font-size: smaller; }
+
+    .table-row > :nth-child(2) {
+        display: flex;
+        gap: 0.25em;
+        align-items: center;
+
+        > code {
+            border: 1px dashed black;
+            border-radius: 0.25em;
+            padding: 0 0.25em;
+            &.allow {
+                background-color: rgb(187, 249, 187);
+                border-color: green;
+            }
+        
+            &.deny {
+                background-color: rgb(247, 204, 204);
+                border-color: darkred;
+            }
+        }
+
+
+        > a:hover {
+            text-decoration: none;
+            // font-size: smaller;
+        }
+    }
+}

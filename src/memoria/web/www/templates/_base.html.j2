@@ -1,0 +1,30 @@
+{% import 'macros.html.j2' as macros with context -%} 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/htmx.org@1.9.12"
+        integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/head-support.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <meta charset="utf-8">
+    {% block head %}<title>{%block title%}{%endblock%} - Memoria</title>{%endblock%}
+    {% block additional_head %}{%endblock%}
+</head>
+<body hx-ext="head-support" {% block body_attrs %}{% endblock %}>
+    <header hx-boost="true">
+        {% block header -%}
+        {% if request.path != '/' %}{{macros.icon_link('search', 'Search', '/', hx_swap="innerHTML swap:250ms settle:250ms")}}{% endif %}
+        
+        {# <div style="flex:1;"></div> #}
+
+        {% if request.path != '/history/' %}{{macros.icon_link('clock', 'History', '/history/', hx_swap="innerHTML swap:250ms settle:250ms")}}{% endif %}
+        {% if request.path != '/settings/' %}{{macros.icon_link('setting-3', 'Settings', '/settings/', hx_swap="innerHTML swap:250ms settle:250ms")}}{% endif %}
+        {% if request.path != '/about/' %}{{macros.icon_link('info', 'About', '/about/', hx_swap="innerHTML swap:250ms settle:250ms")}}{% endif %}
+        {%- endblock %}
+    </header>
+    <div id="content" {% block content_attrs %}{%endblock%}>{% block content %}{% endblock %}</div>
+    <footer>{% block footer %}{% endblock %}</footer>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{% macro kwargs_to_html_attr() -%}
+    {% autoescape false %}{% for key, value in kwargs.items() -%}
+        {{key.replace('_', '-')}}="{{value}}"
+    {%- endfor %}{% endautoescape %}
+{%- endmacro %}
+
+{% macro icon_link(icon, label, href, alt="") -%}
+    <a class="has-icon" href="{{ href }}" title="{{ label }}" {{ kwargs_to_html_attr(**kwargs) }}><img class="icon" src="{{ url_for('static', path='/icons/' + icon + '.svg') }}" height="1" width="1" {% if alt %}alt="{{alt}}"{% endif %}/><span>{{label}}</span></a>
+{%- endmacro %}

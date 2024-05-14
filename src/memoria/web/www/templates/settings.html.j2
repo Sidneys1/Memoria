@@ -1,0 +1,148 @@
+{% extends "_base.html.j2" %}
+{% import 'macros.html.j2' as macros with context -%} 
+{% block title %}Settings{% endblock %}
+
+{% block additional_head -%}
+<style>{% include "settings.css" %}</style>
+<script defer>
+    const SIZES = ['B', 'KiB', 'MiB', 'GiB'];
+    /** Convert a floating point value to an IEC data size string.
+      * @param {number} value
+      * @returns {string} */
+    function iecSize(value) {
+        let size = 0;
+        while (value >= 1000.0 && size < SIZES.length) {
+            value /= 1024.0;
+            size++;
+        }
+        if (size === 0)
+            return `${value.toFixed(0)}${SIZES[size]}`;
+        return `${value.toFixed(2)}${SIZES[size]}`;
+    }
+
+    function showUploadHelp() {
+        helpContent.innerHTML = helpUploadContent.innerHTML;
+        helpDialog.showModal();
+    }
+</script>
+{%- endblock%}
+
+{% block content %}
+<div></div>
+<div>
+    <h1>Settings</h1>
+    <section>
+        <h2>Sources</h2>
+        <div id="sources-buttons">
+            {# <button class="has-icon">
+                <img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"/>
+                <span>Add...</span>
+            </button>
+            <div class="sep"></div> #}
+            <form id="upload-form" hx-post="{{ url_for('api_upload_db') }}" hx-encoding='multipart/form-data' hx-target="#progress-status" hx-trigger="input from:#file">
+                <input id="file" type="file" name="file">
+                <label for="file" class="has-icon" title="Manually upload a browser history database file.">
+                    <img class="icon" src="{{ url_for('static', path='/icons/upload.svg') }}" height="1" width="1"/>
+                    <span>Manual Upload...</span>
+                </label>
+                <span class="whats-this">(<a href="#" onclick="showUploadHelp()" title="What's this?">what's this?</a>)</span>
+            </form>
+        </div>
+        {# <ul>
+            <li>Firefox Sync</li>
+        </ul> #}
+    </section>
+    {# <section>
+        <h2>Allowlist & Denylist</h2>
+        <div id="lists-buttons">
+            <button class="has-icon">
+                <img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"/>
+                <span>Add...</span>
+            </button>
+        </div>
+        <div id="allowlist-table">
+            <div class="table-header">
+                <div>Host</div>
+                <div>Rules</div>
+            </div>
+            <div class="table-body">
+                <div class="table-row">
+                    <div>infosec.exchange</div>
+                    <div>
+                        <code class="allow">*</code>
+                        <code class="deny">r^/$</code>
+                        <code class="deny">/deck/</code>
+                        <a href="#" title="Add new Rule...">+</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> #}
+</div>
+<div></div>
+{% endblock %}
+
+
+{% block footer %}
+    <dialog id="help-dialog">
+        <h1>What's This?</h1>
+        <div id="help-content">Placeholder...</div>
+        <div><button onclick="helpDialog.close()">Close</button></div>
+    </dialog>
+    <template id="help-upload-content">
+        <div style="text-align: left;">
+            <p>You can upload a raw History database from your browser.</p>
+            <h2>Firefox & Other Mozilla-Based Browsers</h2>
+            <ol>
+                <li>Open the browser profile settings (<code>about:profiles</code>) in a new tab.</li>
+                <li>Identify the profile you want to upload history for (generally the profile in use), and click <button class="moz">Open Folder</button>.</li>
+                <li>The file you will want to upload is <code>places.sqlite</code>.</li>
+            </ol>
+            <h2>Chrome, Edge, & other Chromium-Based Browsers</h2>
+            <ol>
+                <li>Open the browser profile settings (<code>about:profile-internals</code>) in a new tab.</li>
+                <li>Expand the profile you want to upload history for and note the <code>Profile Path</code>.</li>
+                <li>The file you will want to upload from that folder is named <code>History</code>.</li>
+            </ol>
+        </div>
+    </template>
+
+    <dialog id="progress-dialog">
+        <h1 id="progress-label">Uploading</h1>
+        <progress id="progress-bar" min="0" max="100"></progress>
+        <div id="progress-status">Placeholder...</div>
+        <div><button id="progress-close-button" onclick="progressDialog.close()">Close</button></div>
+    </dialog>
+    
+
+    <script defer>
+        const helpDialog = document.getElementById('help-dialog');
+        const helpContent = document.getElementById('help-content');
+        const helpUploadContent = document.getElementById('help-upload-content');
+
+        const progressDialog = document.getElementById('progress-dialog');
+        const progressBar = document.getElementById('progress-bar');
+        const progressStatusText = document.getElementById('progress-status');
+        const progressCloseButton = document.getElementById('progress-close-button');
+        
+        htmx.on('#upload-form', 'htmx:beforeRequest', evt => {
+            progressBar.style.display = 'initial';
+            progressCloseButton.style.display = 'none';
+            progressDialog.showModal();
+        });
+        htmx.on('#upload-form', 'htmx:xhr:progress', evt => {
+            if (evt.detail.loaded === evt.detail.total) {
+                progressBar.removeAttribute('value');
+                progressStatusText.innerText = 'Processing uploaded file...';
+                return;
+            }
+            progressStatusText.innerText = `${iecSize(evt.detail.loaded)} / ${iecSize(evt.detail.total)}`;
+            progressBar.setAttribute('value', evt.detail.loaded / evt.detail.total * 1000);
+        });
+        htmx.on('#upload-form', 'htmx:afterRequest', evt => {
+            progressBar.style.display = 'none';
+            progressCloseButton.style.display = 'initial';
+        });
+    </script>
+
+{% endblock %}

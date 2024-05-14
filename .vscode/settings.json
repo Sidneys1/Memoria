@@ -1,0 +1,14 @@
+{
+    "files.exclude": {
+        "**/__pycache__": true
+    },
+    "[python]": {
+        "editor.defaultFormatter": "eeyore.yapf"
+    },
+    "isort.importStrategy": "fromEnvironment",
+    "isort.check": true,
+    "isort.args": [
+        "--settings-path=${workspaceFolder}"
+    ],
+    "python.analysis.typeCheckingMode": "off"
+}

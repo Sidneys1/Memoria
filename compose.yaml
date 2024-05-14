@@ -1,0 +1,47 @@
+version: "3.8"
+
+
+networks:
+    es_net:
+
+
+volumes:
+    es_data:
+
+
+secrets:
+    memoria_elastic_password:
+        external: true
+
+
+services:
+  memoria:
+    image: "sidneys1/memoria"
+    build:
+      context: "."
+      dockerfile: Containerfile
+    secrets:
+    - memoria_elastic_password
+    environment:
+    - "MEMORIA_ELASTIC_HOST=${ELASTIC_HOST:-http://elasticsearch:9200/}"
+    - "MEMORIA_ELASTIC_USER=${ELASTIC_USER:-elastic}"
+    - "MEMORIA_ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-insecure}"
+    depends_on:
+    - elasticsearch
+    networks:
+    - es_net
+    volumes:
+    - "./data/:/data:rw"
+    ports:
+    - "80:80"
+
+  elasticsearch:
+    profiles: [elasticsearch]
+    image: docker.elastic.co/elasticsearch/elasticsearch
+    networks:
+    - es_net
+    environment:
+    - "discovery.type=single-node"
+    - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-insecure}"
+    volumes:
+    - "es_data:/usr/share/elasticsearch/data:rw"

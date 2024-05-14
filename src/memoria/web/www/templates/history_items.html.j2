@@ -1,0 +1,19 @@
+{# <pre>{%debug%}</pre> #}
+{% for h in items %}
+<div class="table-row">
+    <div><span class="history-item" href="#" {# hx-get="{{ url_for('api_history_item', id=h.id) }}" #} title="{{ h.title }} ({{ h.url }})">
+        <span class="title {% if (h.title | trim | truncate(100, end='%%%')).endswith('%%%') %}trunc{%endif%}">{{ h.title | trim | truncate(100, end='') }}</span><br>
+        <small class="{% if (h.url | trim | truncate(150, end='%%%')).endswith('%%%') %}trunc{%endif%}">{{h.url|truncate(150, end='')}}</small></span></div>
+    <div title="{{h.last_visit}}">{{h.last_visit | natural_time}}</div>
+    <div {% if h.last_scrape %}title="{{h.last_scrape}}"{% endif %}>{%if h.last_scrape%}{{h.last_scrape | natural_time}}{%else%}<i>Never</i>{%endif%}</div>
+</div>
+{% endfor %}
+{% if not limit or (items | length) == limit %}
+<div id="load-more" class="table-row" hx-trigger="revealed" hx-indicator="#indicator" hx-get="{{url_for('api_history')}}?{% if limit %}skip={{skip+limit}}&limit={{limit}}{%endif%}" hx-target="#load-more" hx-swap="outerHTML">
+    {# <div style="grid-column: 1 / 6; text-align: center;">
+        <button hx-indicator="#indicator" hx-get="{{url_for('api_history')}}?{% if limit %}skip={{skip+limit}}&limit={{limit}}{%endif%}" hx-target="#load-more" hx-swap="outerHTML">Load more...</button>
+    </div> #}
+</div>
+{% else %}
+<div class="table-row"><div class="slight" style="grid-column: 1 / 4; text-align: center;"><em>-no more-</em></div></div>
+{% endif %}

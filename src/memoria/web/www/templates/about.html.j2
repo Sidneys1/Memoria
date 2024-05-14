@@ -1,0 +1,45 @@
+{% extends "_base.html.j2" %}
+{% block title %}About{% endblock %}
+
+{% block additional_head -%}
+<style>
+#content {
+    text-align: center;
+}
+#version {
+    font-size: small;
+    font-weight: bold;
+}
+#authors {
+    padding-inline-start: 0;
+    margin: 0 auto;
+    width: fit-content;
+    list-style-type: none;
+}
+address {
+    font-style: normal;
+    font-variant: small-caps;
+}
+</style>
+{%- endblock%}
+
+{% block content %}
+<div></div>
+<div>
+    <img id="splash" src="{{ url_for('static', path='/splash.png') }}">
+    <h1>Memoria<div id="version">{{version}}</div></h1>
+    
+    {% for p in description.split('\n\n') %}
+    <p>{{p}}</p>
+    {% endfor %}
+
+    <div>
+        <h3>Authors</h3>
+        <ul id="authors">
+            {% for a in authors %}<li><address class="author"><a rel="author" href="mailto:{{ a.email }}">{{ a.name }}</a></address></li>{% endfor %}
+        </ul>
+    </div>
+
+</div>
+<div></div>
+{% endblock %}
