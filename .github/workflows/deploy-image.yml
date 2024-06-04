@@ -2,9 +2,9 @@ name: Container Image CI
 
 on:
   push:
-    tags:
-      - "v*.*"
-    pull_request:
+    tags: ["v*.*"]
+    branches: ["main"]
+  pull_request:
 
 env:
   REGISTRY: ghcr.io

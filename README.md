@@ -5,6 +5,8 @@
 Memoria ingests URLs from browsing history, then scrapes and indexes the web content to create a personalized search
 engine.
 
+[![Container Image CI](https://github.com/Sidneys1/Memoria/actions/workflows/deploy-image.yml/badge.svg?branch=main&event=push)](https://github.com/Sidneys1/Memoria/actions/workflows/deploy-image.yml)
+
 **Sections**<br>
 🚀 [§ Running Memoria](#running-memoria)<br>
 ⚙️ [§ Configuration](#configuration)<br>
