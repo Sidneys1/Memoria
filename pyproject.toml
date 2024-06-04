@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "memoria"
+name = "memoria-search"
 readme = "README.md"
 # license = {file = "LICENSE"}
 requires-python = ">=3.12"
@@ -68,6 +68,9 @@ exclude = [
      ".vscode/",
      ".editorconfig"
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/memoria"]
 
 [tool.isort]
 line_length = 120
