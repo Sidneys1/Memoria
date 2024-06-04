@@ -16,7 +16,7 @@ secrets:
 
 services:
   memoria:
-    image: "sidneys1/memoria"
+    image: ghcr.io/sidneys1/memoria
     build:
       context: "."
       dockerfile: Containerfile
