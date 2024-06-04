@@ -31,10 +31,15 @@ one of the methods below you can access the web interface at `http://localhost/`
 <details><summary>Running With Python</summary>
 
 ```sh
+# Install from PyPI:
+python3 -m pip install memoria_search
+# Or from source code:
 python3 -m pip install .
+
+# Run:
 python3 -m memoria.web --port 80
 
-# Or without installing:
+# Or run from source code without installing (you may need to install some dependencies):
 PYTHONPATH=./src python -m memoria.web --port 80
 ```
 

@@ -62,15 +62,31 @@ path = "src/memoria/__about__.py"
 [tool.hatch.metadata.hooks.custom]
 
 [tool.hatch.build.targets.sdist]
+ignore-vcs = true
 exclude = [
-     "allowlist.txt",
-     "denylist.txt",
-     ".vscode/",
-     ".editorconfig"
+    "allowlist.txt",
+    "denylist.txt",
+    ".vscode/",
+    ".editorconfig",
+    ".python-version",
+    "__pycache__/",
+    "dist/",
+    "*.code-workspace"
 ]
 
 [tool.hatch.build.targets.wheel]
+ignore-vcs = true
 packages = ["src/memoria"]
+exclude = [
+    "allowlist.txt",
+    "denylist.txt",
+    ".vscode/",
+    ".editorconfig",
+    ".python-version",
+    "__pycache__/",
+    "dist/",
+    "*.code-workspace"
+]
 
 [tool.isort]
 line_length = 120
