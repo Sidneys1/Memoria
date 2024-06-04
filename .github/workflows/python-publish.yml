@@ -1,4 +1,4 @@
-name: Build and Publish Releases
+name: Python Package CI
 
 on:
   release:
