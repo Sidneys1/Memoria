@@ -43,7 +43,7 @@ PYTHONPATH=./src python -m memoria.web --port 80
 Self-contained Compose (including an Elasticsearch instance):
 ```sh
 # With Docker Compose or Podman Compose:
-podman-compose --profile elasticsearch up --build
+podman-compose --profile elasticsearch up
 
 # Cleanup:
 podman-compose down --volumes
@@ -51,13 +51,16 @@ podman-compose down --volumes
 
 Single Docker container (for use with an existing Elasticsearch instance):
 ```sh
+# Build or pull
+podman build -t ghcr.io/sidneys1/memoria .
+podman pull ghcr.io/sidneys1/memoria
+
 # With plain Docker or Podman
-podman build -t sidneys1/memoria .
-podman run --name memoria -e MEMORIA_ELASTIC_HOST=http://hostname:9200/ -p 80 sidneys1/memoria
+podman run --name memoria -e MEMORIA_ELASTIC_HOST=http://hostname:9200/ -p 80 ghcr.io/sidneys1/memoria
 
 # Cleanup:
 podman container rm memoria
-podman image rm sidneys1/memoria
+podman image rm ghcr.io/sidneys1/memoria
 ```
 
 **Note** that Podman commands may require `sudo` to run, or that you
