@@ -1,6 +1,8 @@
-<div align="center"><img src="./src/memoria/web/www/static/splash.png"></div>
-<h1 align="center">Memoria</h1>
 <div align="center">
+
+![Memoria Splash Logo](./src/memoria/web/www/static/splash.png)
+
+# Memoria
 
 A selfhosted service for indexing and searching personal web history.
 
@@ -8,7 +10,7 @@ A selfhosted service for indexing and searching personal web history.
 [![Build and Publish Releases](https://github.com/Sidneys1/Memoria/actions/workflows/python-publish.yml/badge.svg)](https://github.com/Sidneys1/Memoria/actions/workflows/python-publish.yml)
 ![PyPI - Version](https://img.shields.io/pypi/v/memoria_search?style=flat&logo=pypi&label=Python%20Package&color=%2371ca60)
 
-</div><br>
+</div>
 
 Memoria ingests URLs from browsing history, then scrapes and indexes the web content to create a personalized search
 engine.
@@ -19,7 +21,11 @@ engine.
 🧩 [§ Plugins](#plugins)
 
 **Other Documentation**<br>
-📑 [Plugin Development](./docs/Plugin%20Development.md)<br>
+📃 [Changelog](./CHANGELOG.md)<br>
+📦 [Building](./BUILDING.md)<br>
+🤝 [Contributing](./CONTRIBUTING.md)<br>
+⚖️ [License](./LICENSE)<br>
+📑 [Plugin Development](./docs/Plugin%20Development.md)
 
 Running Memoria
 ---------------
@@ -94,11 +100,15 @@ The file [`compose.yaml`](./compose.yaml) shows the most basic Compose strategy,
 container. You can use Memoria with an existing Elasticsearch instance like so[^1]:
 
 ```sh
+# You may want to use the `memoria_elastic_password` secret by uncommenting the
+# relevant sections of `compose.yaml` and running:
+printf 'my-password-here' | podman secret create memoria_elastic_password -
+
 export ELASTIC_HOST=http://hostname:9200/
 podman-compose up --build 
 ```
 
-[^1]: See [§Configuration](#configuration) for more environment variables.
+[^1]: See [§Configuration](#configuration) for more environment variables and configuration options.
 
 A Compose profile named `elasticsearch` is also provided that will additionally launch an Elasticsearch container.
 
