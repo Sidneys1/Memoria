@@ -10,5 +10,8 @@
     "isort.args": [
         "--settings-path=${workspaceFolder}"
     ],
-    "python.analysis.typeCheckingMode": "off"
+    "cSpell.words": [
+        "hostnames"
+    ],
+    "python.analysis.typeCheckingMode": "standard"
 }
