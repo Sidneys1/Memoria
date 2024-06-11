@@ -18,7 +18,7 @@ Initial project commit, basic functionality intact.
 
 <!--------------------------------------------------------------------------------------------------------------------->
 
-<template>
+<!--
 {version}
 ---------
 
@@ -28,7 +28,7 @@ Any additional notes for this release.
 
 ### Added
 
-<!-- List of things that have been added. Be sure to @mention contributors, #tag relevant discussions/issues/PRs. -->
+<!~~ List of things that have been added. Be sure to @mention contributors, #tag relevant discussions/issues/PRs. ~~>
 - A changelog (@sidneys1).
 
 ### Changed
@@ -36,4 +36,4 @@ Any additional notes for this release.
 ### Removed
 ### Fixed
 ### Security
-</template>
+-->
