@@ -1,11 +1,19 @@
-<div align="center"><img src="./src/memoria/web/www/static/splash.png"></div>
-<h1 align="center">Memoria</h1>
-<div align="center">A selfhosted service for indexing and searching personal web history.</div><br>
+<div align="center">
+
+![Memoria Splash Logo](./src/memoria/web/www/static/splash.png)
+
+# Memoria
+
+A selfhosted service for indexing and searching personal web history.
+
+[![Container Image CI](https://github.com/Sidneys1/Memoria/actions/workflows/deploy-image.yml/badge.svg?branch=main&event=push)](https://github.com/Sidneys1/Memoria/actions/workflows/deploy-image.yml)
+[![Build and Publish Releases](https://github.com/Sidneys1/Memoria/actions/workflows/python-publish.yml/badge.svg)](https://github.com/Sidneys1/Memoria/actions/workflows/python-publish.yml)
+![PyPI - Version](https://img.shields.io/pypi/v/memoria_search?style=flat&logo=pypi&label=Python%20Package&color=%2371ca60)
+
+</div>
 
 Memoria ingests URLs from browsing history, then scrapes and indexes the web content to create a personalized search
 engine.
-
-[![Container Image CI](https://github.com/Sidneys1/Memoria/actions/workflows/deploy-image.yml/badge.svg?branch=main&event=push)](https://github.com/Sidneys1/Memoria/actions/workflows/deploy-image.yml)
 
 **Sections**<br>
 🚀 [§ Running Memoria](#running-memoria)<br>
@@ -13,7 +21,11 @@ engine.
 🧩 [§ Plugins](#plugins)
 
 **Other Documentation**<br>
-📑 [Plugin Development](./docs/Plugin%20Development.md)<br>
+📃 [Changelog](./CHANGELOG.md)<br>
+📦 [Building](./BUILDING.md)<br>
+🤝 [Contributing](./CONTRIBUTING.md)<br>
+⚖️ [License](./LICENSE)<br>
+📑 [Plugin Development](./docs/Plugin%20Development.md)
 
 Running Memoria
 ---------------
@@ -25,10 +37,15 @@ one of the methods below you can access the web interface at `http://localhost/`
 <details><summary>Running With Python</summary>
 
 ```sh
+# Install from PyPI:
+python3 -m pip install memoria_search
+# Or from source code:
 python3 -m pip install .
+
+# Run:
 python3 -m memoria.web --port 80
 
-# Or without installing:
+# Or run from source code without installing (you may need to install some dependencies):
 PYTHONPATH=./src python -m memoria.web --port 80
 ```
 
@@ -83,11 +100,15 @@ The file [`compose.yaml`](./compose.yaml) shows the most basic Compose strategy,
 container. You can use Memoria with an existing Elasticsearch instance like so[^1]:
 
 ```sh
+# You may want to use the `memoria_elastic_password` secret by uncommenting the
+# relevant sections of `compose.yaml` and running:
+printf 'my-password-here' | podman secret create memoria_elastic_password -
+
 export ELASTIC_HOST=http://hostname:9200/
 podman-compose up --build 
 ```
 
-[^1]: See [§Configuration](#configuration) for more environment variables.
+[^1]: See [§Configuration](#configuration) for more environment variables and configuration options.
 
 A Compose profile named `elasticsearch` is also provided that will additionally launch an Elasticsearch container.
 

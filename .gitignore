@@ -11,3 +11,9 @@ src/memoria/web/www/templates/*.css
 src/memoria/web/www/templates/*.css.map
 src/memoria/web/www/static/*.css
 src/memoria/web/www/static/*.css.map
+
+# Misc
+TODO.md
+get-ff-sync.sh
+/data/
+/secrets/

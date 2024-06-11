@@ -4,6 +4,7 @@ on:
   push:
     tags: ["v*.*"]
     branches: ["main"]
+    paths: ["/src/**", "/.gitignore", "/Containerfile", "/hatch_build.py", "/pyproject.toml", "/README.md"]
   pull_request:
 
 env:

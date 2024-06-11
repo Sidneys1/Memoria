@@ -1,4 +1,4 @@
-name: Build and Publish Releases
+name: Python Package CI
 
 on:
   release:
@@ -20,6 +20,17 @@ jobs:
         pip install
         hatch
         --user
+    - name: Compile CSS from SCSS files
+      uses: gha-utilities/sass-build@v0.4.7
+      with:
+        source: |
+          ./src/memoria/web/www/static/styles.scss
+          ./src/memoria/web/www/templates/settings.scss
+          ./src/memoria/web/www/templates/index.scss
+        destination: |
+          ./src/memoria/web/www/static/styles.css
+          ./src/memoria/web/www/templates/settings.css
+          ./src/memoria/web/www/templates/index.css
     - name: Build a binary wheel and a source tarball
       run: python3 -m hatch build
     - name: Store the distribution packages

@@ -8,10 +8,10 @@ networks:
 volumes:
     es_data:
 
-
-secrets:
-    memoria_elastic_password:
-        external: true
+# # Secrets: uncomment to use a secret to store the Elasticsearch password
+# secrets:
+#     memoria_elastic_password:
+#         external: true
 
 
 services:
@@ -37,7 +37,7 @@ services:
 
   elasticsearch:
     profiles: [elasticsearch]
-    image: docker.elastic.co/elasticsearch/elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     networks:
     - es_net
     environment:
