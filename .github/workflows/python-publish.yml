@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: release
-      url: https://pypi.org/p/memoria
+      url: https://pypi.org/p/memoria-search
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
     steps:
