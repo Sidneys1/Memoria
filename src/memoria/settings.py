@@ -22,9 +22,6 @@ class Settings(BaseSettings):
     extractor: str = 'HtmlExtractor'
     filter_stack: list[str] = ['HtmlContentFinder']
 
-    allowlist: Path = './data/allowlist.txt'
-    denylist: Path = './data/denylist.txt'
-
     @classmethod
     def settings_customise_sources(cls, _, init_settings, env_settings, dotenv_settings, file_secret_settings) -> tuple[PydanticBaseSettingsSource, ...]:
         return init_settings, file_secret_settings, env_settings, dotenv_settings
