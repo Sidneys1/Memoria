@@ -7,6 +7,9 @@
     font-optical-sizing: auto;
     --text-padding-bottom: 0em;
     --icons-translate: 0.15em;
+
+    --pill-color: #e2922a;
+    --pill-text: black;
 }
 
 html {height: 100%;}
@@ -61,6 +64,10 @@ body {
     }
 }
 
+section + section {
+    margin-top: 3em;
+}
+
 a[target="_blank"]:not(.title)::after {
     content: '↗️';
     font-size: x-small;
@@ -91,7 +98,7 @@ a {
 
 h1,
 h2 {
-    font-weight: 100;
+    font-weight: 200;
     text-align: center;
 }
 
@@ -198,15 +205,41 @@ label {
 }
 
 .pill {
-    border-radius: 0.5em;
-    background-color: #e2922a;
-    color: black;
+    border-radius: 0.75em;
+    background-color: var(--pill-color);
+    color: var(--pill-text);
     padding: 0 0.25em;
     font-size: smaller;
+    border: 1px solid var(--pill-color);
 
     +.pill {
         margin-left: 0.5em;
     }
+}
+
+.pill-left {
+    border-radius: 0.5em 0 0 0.5em;
+    background-color: var(--pill-color);
+    padding-left: 0.25em;
+    font-size: smaller;
+    border: 1px solid var(--pill-color);
+}
+
+.pill-right {
+    border-radius: 0 0.5em 0.5em 0;
+    background-color: var(--pill-color);
+    padding-right: 0.25em;
+    font-size: smaller;
+    border: 1px solid var(--pill-color);
+
+    +.pill {
+        margin-left: 0.5em;
+    }
+}
+
+.pill-hollow {
+    color: initial;
+    background-color: white;
 }
 
 // a:hover.trunc::after, a:hover .trunc::after {
@@ -231,18 +264,20 @@ blockquote {
 
 dialog {
     min-width: 500px;
+    max-height: 90vh;
     text-align: center;
     &::backdrop {
         backdrop-filter: saturate(25%) brightness(50%);
     }
 
-    h1, h2, h3
+    h1, h2, h3,
     h4,
     h5,
     h6 {
         font-weight: 800;
         text-align: inherit;
     }
+    h1, h2, h3 {border-bottom: 1px solid #ccc;}
 
     h1 { font-size: 1.5em; }
     h2, h3, h4, h5, h6 { font-size: 1em; font-variant: small-caps; }
@@ -269,4 +304,22 @@ dialog {
 
 .slight {
     color: #555;
+}
+
+:is(.icon, .button).fade {
+    opacity: 0.5;
+    transition: opacity 250ms ease-in-out;
+}
+
+:is(.icon, .button).fade:hover {
+    opacity: 1;
+    transition: opacity 250ms ease-in-out;
+}
+
+.mgreen {
+    color: #86b42b;
+}
+
+.morange {
+    color: #ac6218;
 }
