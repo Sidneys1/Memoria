@@ -104,87 +104,6 @@ podman-compose up --build --profile elasticsearch
 Configuration
 -------------
 
-### Allow and Deny Lists
-
-Memoria utilizes allow and deny lists to filter incoming history items so that unwanted websites aren't indexed. These
-lists are currently just text files containing one rule per line.
-
-<details>
-
-Shell-like quotation marks and backslashes are
-supported. A history item will be downloaded by Memoria, given the entries matching its domain name, if the URL is:
-
-1. Matched by any *strong* allowlist entry pertaining; or
-2. Matched by any *weak* allowlist entry pertaining, **and** doesn't match any *strong* denylist entries pertaining.
-
-Additionally, if a subdomain is not matched by any entries then its parent domains will be used sequentially. For
-example, if `gist.github.com` doesn't match any entries, then entries for `github.com` will be checked.
-
-A *weak* list entry is composed of just a domain name:
-```sh
-example.com
-```
-While a *strong* list entry is composed of a domain name and zero or more rules that can further restrict the entry:
-```sh
-example.com /login r^/$
-```
-
-There are currently two types of rules:
-- **Path rules** start with `/` and match if the URL path-part begins with this value.
-- **Regular expression rules** start with `r` and match if any part of the URL matches.
-
-So, to break it down, putting `example.com` in the allowlist and this entry in the denylist:
-
-<h3><code><ruby>example.com<rt>domain</rt></ruby> <ruby><code>/login</code><rt>path&ensp;rule</rt></ruby> <ruby><code>r^/$'</code><rt>regex&ensp;rule</rt></ruby></code></h3>
-
-Would result in these URLs being allowed:
-
-- `https://example.com/foo`
-- `https://example.com/foo/bar/baz#link?search=bat`
-
-And these URLs being denied:
-
-- <h3><samp>https:<wbr>//www<wbr>.<ruby><code>example.com</code><rt>domain</rt></ruby><ruby><code>/login</code><rt>path&ensp;rule</rt></ruby></samp></h3>
-- <h3><samp>https:<wbr>//www<wbr>.<ruby><code>example.com</code><rt>domain</rt></ruby><ruby><code>/login</code><rt>path&ensp;rule</rt>/flow2?step=0</ruby></samp></h3>
-- <h3><samp>https://<ruby><code>example.com</code><rt>domain</rt></ruby><ruby><code>/</code>&nbsp;&nbsp;&nbsp;<rt>regex rule</rt></ruby></samp></h3>
-
-<details><summary>Examples</summary>
-
-- Allow all URLs under GitHub.com, except login, search, my (Sidneys1) own projects and pages, and searches within
-  projects or organizations:
-
-  ```sh
-  # allowlist.txt
-  github.com
-  
-  # denylist.txt
-  github.com /login /search /Sidneys1/ 'r/(?:search|repositories|issues)\?q='
-  ```
-
-- Allow any page under a domain except the landing page (`example.com/`):
-
-  ```sh
-  # allowlist.txt
-  example.com
-  
-  # denylist.txt
-  example.com r^/$
-  ```
-
-* Deny any page at stackoverflow.com except questions:
-
-  ```sh
-  # allowlist.txt
-  stackoverflow.com /questions/ /q/
-  
-  # denylist.txt
-  stackoverflow.com
-  ```
-
-</details>
-
-</details>
-
 ### Options
 
 Memoria has several deployment configuration options that control overall behavior. These can be set via environment
@@ -205,11 +124,6 @@ variables or container secrets. The following configuration options are provided
         <tr><td><code>import_threads</code></td> <td>The maximum number of processes to use to download history items</td>   <td>
 
 $\frac{cpus}{2}$[^2]</td></tr>
-    </tbody>
-    <tbody>
-        <tr><th rowspan="4">Allow/Deny Lists</th>
-            <td><code>allowlist</code></td> <td>Path to a file defining allowlist<sup><a href="#allow-and-deny-lists">§</a></sup> entries</td> <td><code>./data/allowlist.txt</code></td></tr>
-        <tr><td><code>denylist</code></td>  <td>Path to a file defining denylist<sup><a href="#allow-and-deny-lists">§</a></sup> entries</td>  <td><code>./data/denylist.txt</code></td></tr>
     </tbody>
     <tbody>
         <tr><th rowspan="4">Databases</th>
@@ -245,7 +159,7 @@ described in [§Configuration](#configuration).
 
 <details>
 
-There are currently three types of Memoria Plugins, used during web content retrieval and processing:
+There are currently three types of Memoria Plugins used during web content retrieval and processing:
 - **Downloaders**<br>
   Downloaders are responsible for accessing a URL and retrieving its content from the internet. They can provide this
   content in many different formats to the next plugin in the stack. The most basic Downloaders (like the built-in
@@ -267,6 +181,8 @@ There are currently three types of Memoria Plugins, used during web content retr
   be used to enrich the Elasticsearch document, such as `"author"` or `"description"`.
 
 </details>
+
+<!-- TODO: section on scraping rule plugins -->
 
 > [!TIP]
 > See the [📑 Plugin Development](./docs/Plugin%20Development.md) guide for information on developing your own Memoria plugins.
