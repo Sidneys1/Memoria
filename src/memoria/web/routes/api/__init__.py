@@ -20,6 +20,8 @@ API = APIRouter(prefix='/api/v1')
 from .history import *
 from .search import *
 from .upload_db import *
+from .allowlist import *
+from .denylist import *
 
 # Include router
 APP.include_router(API)
