@@ -34,6 +34,21 @@
         helpContent.innerHTML = helpDenylistContent.innerHTML;
         helpDialog.showModal();
     }
+
+    /*** Show edit @param {HTMLButtonElement} sender */
+    function showEditAllowlistFilter(sender, id, value) {
+        sender.closest('.rule').id = 'editing-allow-list-filter';
+        editScrapingRuleFilterId.value = id;
+        editScrapingRuleFilterValue.value = value;
+        editScrapingRuleFilterDialog.showModal();
+    }
+
+    /*** Show edit @param {HTMLButtonElement} sender */
+    function showNewAllowlistFilter(sender, hostname) {
+        sender.closest('.allow-list-filters').id = 'new-allow-list-filter';
+        newScrapingRuleFilterHostname.value = hostname;
+        newScrapingRuleFilterDialog.showModal();
+    }
 </script>
 {%- endblock%}
 
@@ -63,30 +78,37 @@
         </ul> #}
     </section>
     <section>
-        <h2>Scraping Rules</h2>
+        <h2>
+            Scraping Rules
+            <div style="font-size: small; font-weight: initial;" class="whats-this"><a href="#" onclick="showScrapingRulesHelp()" title="What's this?">What's this?</a></div>
+        </h2>
         <div id="lists-buttons">
-            <span class="whats-this"><a href="#" onclick="showScrapingRulesHelp()" title="What's this?">What's this?</a></span>
-            <div class="sep"></div>
             <button class="has-icon" onclick="newScrapingRuleDialog.showModal();">
                 <img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"/>
                 <span>Add...</span>
             </button>
         </div>
         <div id="allowlist-table">
-            <div class="table-header"><div>Host</div><div></div><div>Rules</div></div>
+            <div class="table-header"><div></div><div>Host</div><div></div><div>Filters</div></div>
             <div id="allowlist-table-body" class="table-body" hx-indicator="#indicator" hx-get="{{ url_for('api_allowlist') }}?limit=100" hx-trigger="load once"></div>
         </div>
         <div style="text-align: center;"><img style="margin: 0 auto;" id="indicator" class="htmx-indicator" src="{{ url_for('static', path='/oval.svg')}}" width="38" alt="" /></div>
     </section>
     <section>
-        <h2>Blocked Hostnames</h2>
+        <h2>
+            Blocked Hostnames
+            <div style="font-size: small; font-weight: initial;" class="whats-this"><a href="#" onclick="showDenylistHelp()" title="What's this?">What's this?</a></div>
+        </h2>
         <div id="lists-buttons">
-            <span class="whats-this"><a href="#" onclick="showDenylistHelp()" title="What's this?">What's this?</a></span>
-            <div class="sep"></div>
             <button class="has-icon" onclick="newDenylistDialog.showModal();">
                 <img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"/>
                 <span>Add...</span>
             </button>
+            {# <div class="sep"></div>
+            <button class="has-icon" onclick="newDenylistDialog.showModal();">
+                <img class="icon" src="{{ url_for('static', path='/icons/filter.svg') }}" height="1" width="1"/>
+                <span>Run Now...</span>
+            </button> #}
         </div>
         <div id="denylist-table">
             <div class="table-header"><div></div><div>Host</div></div>
@@ -123,6 +145,37 @@
         <input id="new-denylist-hostname" placeholder="example.com" name="hostname">
         <button id="new-denylist-cancel" type="reset" onclick="newDenylistDialog.close(); newDenylistForm.reset();">Cancel</button>
         <button id="new-denylist-cancel" type="submit">Create</button>
+        </form>
+    </dialog>
+
+    <dialog id="edit-scraping-rule-filter-dialog">
+        <h1>Edit Filter...</h1>
+        <form id="edit-scraping-rule-filter-form" hx-put="{{url_for('api_put_allowlist_rule', id='{id}')}}" hx-target="#editing-allow-list-filter">
+        <input type="hidden" id="edit-scraping-rule-filter-id" name="id">
+        <label for="edit-scraping-rule-filter-value">Value</label>
+        <input id="edit-scraping-rule-filter-value" name="value">
+        <button id="edit-scraping-rule-filter-cancel" type="reset" onclick="editScrapingRuleFilterDialog.close(); editScrapingRuleFilterForm.reset();">Cancel</button>
+        <button id="edit-scraping-rule-filter-cancel" type="submit">Update</button>
+        </form>
+    </dialog>
+
+    <dialog id="new-scraping-rule-filter-dialog">
+        <h1>New Filter...</h1>
+        <form id="new-scraping-rule-filter-form" hx-post="{{url_for('api_post_allowlist_rule', hostname='{hostname}')}}" hx-target="#new-allow-list-filter" hx-swap="beforeend">
+        <input type="hidden" id="new-scraping-rule-filter-hostname" name="hostname">
+
+        <label for="new-scraping-rule-filter-type">Filter Type</label>
+        <select id="new-scraping-rule-filter-type" name="plugin_id">
+        {%- for plugin, options in plugins.items() %}
+            <option value="{{plugin}}">{{options['display_name']}}</option>
+        {% endfor -%}
+        </select>
+
+        <label for="new-scraping-rule-filter-value">Value</label>
+        <input id="new-scraping-rule-filter-value" name="value">
+
+        <button id="new-scraping-rule-filter-cancel" type="reset" onclick="newScrapingRuleFilterDialog.close(); newScrapingRuleFilterForm.reset();">Cancel</button>
+        <button id="new-scraping-rule-filter-cancel" type="submit">Add</button>
         </form>
     </dialog>
 
@@ -174,8 +227,8 @@
                 <code>example.com/questions/[…]</code>?
             </p>
             <div style="padding: 0 8ex;">
-                {% for identifier, doc, examples in rule_plugin_docs %}
-                <h3>{{identifier}} Filters</h3>
+                {% for identifier, (doc, doc_short, examples) in rule_plugin_docs.items() %}
+                <h3>{{plugins[identifier]['name']}} Filters</h3>
                 {{doc|safe}}
                 {% if examples %}
                 <dl>
@@ -211,6 +264,15 @@
     <script defer>
         const newScrapingRuleDialog = document.getElementById('new-scraping-rule-dialog');
         const newScrapingRuleForm = document.getElementById('new-scraping-rule-form');
+
+        const newScrapingRuleFilterDialog = document.getElementById('new-scraping-rule-filter-dialog');
+        const newScrapingRuleFilterForm = document.getElementById('new-scraping-rule-filter-form');
+        const newScrapingRuleFilterHostname = document.getElementById('new-scraping-rule-filter-hostname');
+
+        const editScrapingRuleFilterDialog = document.getElementById('edit-scraping-rule-filter-dialog');
+        const editScrapingRuleFilterForm = document.getElementById('edit-scraping-rule-filter-form');
+        const editScrapingRuleFilterId = document.getElementById('edit-scraping-rule-filter-id');
+        const editScrapingRuleFilterValue = document.getElementById('edit-scraping-rule-filter-value');
 
         const newDenylistDialog = document.getElementById('new-denylist-dialog');
         const newDenylistForm = document.getElementById('new-denylist-form');
@@ -255,6 +317,27 @@
         htmx.on('#new-denylist-form', 'htmx:afterRequest', evt => {
             newDenylistDialog.close();
             newDenylistForm.reset();
+        });
+
+        htmx.on('#edit-scraping-rule-filter-form', 'htmx:afterRequest', evt => {
+            editScrapingRuleFilterDialog.close();
+            editScrapingRuleFilterForm.reset();
+        });
+
+        htmx.on('#new-scraping-rule-filter-form', 'htmx:afterRequest', evt => {
+            newScrapingRuleFilterDialog.close();
+            newScrapingRuleFilterForm.reset();
+        });
+
+        document.body.addEventListener("htmx:configRequest", function (event) {
+            let pathWithParameters = event.detail.path.replace(/{([A-Za-z0-9_]+)}/g, function (_match, parameterName) {
+                let parameterValue = event.detail.parameters[parameterName]
+                delete event.detail.parameters[parameterName]
+
+                return parameterValue
+            })
+
+            event.detail.path = pathWithParameters
         });
     </script>
 

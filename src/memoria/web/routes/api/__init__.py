@@ -21,6 +21,7 @@ from .history import *
 from .search import *
 from .upload_db import *
 from .allowlist import *
+from .allowlist_rules import *
 from .denylist import *
 
 # Include router

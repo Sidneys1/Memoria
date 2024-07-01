@@ -18,7 +18,7 @@ class PrefixAllowlistRule(AllowlistRule):
     _LOG = getLogger(__module__ + '.PrefixAllowlistRule')
     _rule_cache: dict[Hostname, list[re.Pattern[str]]]
 
-    DISPLAY_OPTIONS = AllowlistRule.DisplayOptions(color='#86b42b')
+    DISPLAY_OPTIONS = AllowlistRule.DisplayOptions(prefix='Starts With', color='#86b42b')
 
     LONG_DOCUMENTATION = _DOC_HTML
     LONG_DOC_EXAMPLES = _DOC_EXAMPLES

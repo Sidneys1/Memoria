@@ -142,10 +142,22 @@ button.has-icon {
     background: none;
 	color: inherit;
 	border: none;
-	padding: 0;
+	padding: 0.1em 0.5em;
 	font: inherit;
 	cursor: pointer;
 	outline: inherit;
+}
+
+button.icon-only {
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0.1em 0.2em;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+    text-align: center;
+    align-items: center;
 }
 
 .thin {
@@ -223,6 +235,7 @@ label {
     padding-left: 0.25em;
     font-size: smaller;
     border: 1px solid var(--pill-color);
+    padding: 0 0.25em 0 0.5em;
 }
 
 .pill-right {
@@ -231,6 +244,7 @@ label {
     padding-right: 0.25em;
     font-size: smaller;
     border: 1px solid var(--pill-color);
+    padding: 0 0.5em 0 0.25em;
 
     +.pill {
         margin-left: 0.5em;
@@ -306,14 +320,12 @@ dialog {
     color: #555;
 }
 
-:is(.icon, .button).fade {
+.icon.fade, button.fade .icon {
     opacity: 0.5;
     transition: opacity 250ms ease-in-out;
-}
-
-:is(.icon, .button).fade:hover {
-    opacity: 1;
-    transition: opacity 250ms ease-in-out;
+    &:hover {
+        opacity: 1;
+    }
 }
 
 .mgreen {

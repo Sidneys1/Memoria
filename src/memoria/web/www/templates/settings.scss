@@ -68,7 +68,7 @@
 #allowlist-table {
     width: 100%;
     display: grid;
-    grid-template-columns: auto auto 1fr auto;
+    grid-template-columns: auto auto auto 1fr;
 
     > .table-footer {
         border-top: 2px solid #999;
@@ -98,18 +98,18 @@
     .table-row > :not(:first-child) { border-left: 1px solid #c1c1c1; }
     // :is(.table-header, .table-row) > :nth-child(4) { grid-column: 4; }
     
-    .table-header > :nth-child(1) {
-        text-align: right;
-    }
     .table-row > :nth-child(1) {
-        font-size: smaller;
-        text-align: right;
-    }
-    
-    .table-row > :nth-child(2) {
         display: flex;
         gap: 0.25em;
         align-items: center;
+    }
+    
+    .table-header > :nth-child(2) {
+        text-align: right;
+    }
+    .table-row > :nth-child(2) {
+        font-size: smaller;
+        text-align: right;
         border-left: none;
     }
     
@@ -117,13 +117,13 @@
         display: flex;
         gap: 0.25em;
         align-items: center;
+        border-left: none;
     }
     
     .table-row > :nth-child(4) {
         display: flex;
         gap: 0.25em;
         align-items: center;
-        border-left: none;
     }
 
     .table-row + .table-row {
@@ -252,3 +252,52 @@ ruby {
         justify-self: right;
     }
 }
+
+#edit-scraping-rule-filter-form {
+    gap: 0.5em 1em;
+    display: grid;
+    grid-template-columns: auto 1fr;
+
+    label {
+        grid-column: 1;
+    }
+    input {
+        grid-column: 2;
+    }
+
+    button[type="reset"] {
+        grid-row: 2;
+        grid-column: 1;
+        justify-self: left;
+    }
+    button[type="submit"] {
+        grid-row: 2;
+        grid-column: 2;
+        justify-self: right;
+    }
+}
+
+#new-scraping-rule-filter-form {
+    gap: 0.5em 1em;
+    display: grid;
+    grid-template-columns: auto 1fr;
+
+    label {
+        grid-column: 1;
+    }
+    input, select {
+        grid-column: 2;
+    }
+
+    button[type="reset"] {
+        grid-row: 3;
+        grid-column: 1;
+        justify-self: left;
+    }
+    button[type="submit"] {
+        grid-row: 3;
+        grid-column: 2;
+        justify-self: right;
+    }
+}
+

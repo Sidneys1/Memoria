@@ -1,25 +1,13 @@
 <div class="table-row">
+    <div><button class="icon-only fade" title="Delete host..."  hx-confirm="Really delete host '{{hostname}}'?" hx-delete="{{url_for('api_delete_allowlist', hostname=hostname)}}" hx-target="closest .table-row"><img class="icon" src="{{ url_for('static', path='/icons/delete.svg') }}" height="1" width="1"></button></div>
     <div>{{hostname}}</div>
-    <div>
-        {# <button class="has-icon" title="Edit host..."><img class="icon fade" src="{{ url_for('static', path='/icons/pen.svg') }}" height="1" width="1">&nbsp; #}
-    </div>
-    <div>
-        {# <button class="has-icon" style="margin-right: 0.5em;" title="Add Filter..."><img class="icon fade" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"></button> #}
+    <div><button class="icon-only fade" title="Edit host..."><img class="icon" src="{{ url_for('static', path='/icons/pen.svg') }}" height="1" width="1"></div>
+    <div class="allow-list-filters">
+        <button class="icon-only fade" style="margin-right: 0.5em;" title="Add Filter..." onclick="showNewAllowlistFilter(this, '{{hostname}}');"><img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"></button>
     {% for r in rules -%}
-        <div class="rule">
-            <span style="--pill-color: {{r.color}};">
-            {%- if r.prefix -%}
-                <span class="pill-left">{{r.prefix}}</span><span class="pill-right pill-hollow">{% if r.value.startswith(r.prefix) %}{{ r.value[r.prefix | length:] }}{% else %}<samp>{{r.value}}</samp>{% endif %}</span>
-            {%- else -%}
-                <span class="pill">{{r.value}}</span>
-            {%- endif -%}
-            </span>
-            {# <button class="has-icon" style="font-size: smaller;" title="Edit filter..."><img class="icon fade" src="{{ url_for('static', path='/icons/note.svg') }}" height="1" width="1">&nbsp; #}
-            {# <button class="has-icon" style="font-size: smaller;" title="Delete filter..." hx-confirm="Really delete filter '{{r.value}}'?" hx-delete="{{url_for('api_allowlist')}}/{{hostname}}/rules/{{r.id}}"><img class="icon fade" src="{{ url_for('static', path='/icons/delete.svg') }}" height="1" width="1"> #}
-        </div>
+        {% with color=r.color, prefix=r.prefix, value=r.value, id=r.id -%}
+            {%- include "allowlist_rule.html.j2" with context -%}
+        {%- endwith %}
     {%- endfor %}
-    </div>
-    <div>
-        <button class="has-icon" title="Delete host..."  hx-confirm="Really delete host '{{hostname}}'?" hx-delete="{{url_for('api_delete_allowlist', hostname=hostname)}}" hx-target="closest .table-row"><img class="icon fade" src="{{ url_for('static', path='/icons/delete.svg') }}" height="1" width="1"></button>
     </div>
 </div>

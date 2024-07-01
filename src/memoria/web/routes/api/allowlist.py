@@ -1,6 +1,4 @@
-from typing import Annotated, Any
-
-from fastapi import Depends, Form
+from fastapi import Form
 from fasthx import JinjaContext
 
 from ....logic.allowlist import AllowlistHost, get_allowlist
@@ -25,6 +23,7 @@ async def api_new_allowlist(session: SqlSession, hostname: str = Form()):
     async with session.begin():
         session.add(host)
     return host
+
 
 @API.delete("/allowlist/{hostname}")
 @HX.hx('blank.html.j2')

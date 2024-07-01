@@ -20,12 +20,16 @@ class AllowlistRule(Plugin, ABC):
     class DisplayOptions:
         color: str|None = None
         prefix: str|None = None
+        display_name: str|None = None
 
     DISPLAY_OPTIONS: ClassVar[DisplayOptions|None] = None
     """Used for UI/UX display purposes. Can be `None`."""
 
     LONG_DOCUMENTATION: ClassVar[Html|None] = None
     """Long (up to several paragraphs) HTML documentation. Used for UI/UX display purposes. Can be `None`."""
+
+    SHORT_DOCUMENTATION: ClassVar[Html|None] = None
+    """Short (up to a paragraph) HTML documentation. Used for UI/UX display purposes. Can be `None`."""
 
     LONG_DOC_EXAMPLES: ClassVar[Sequence[tuple[str, Html]]|None] = None
     """Examples for use with the long HTML documentation. Lists of (example_value, html_description). Used for UI/UX display purposes. Can be `None`."""
