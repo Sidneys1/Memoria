@@ -1,0 +1,13 @@
+<div class="table-row">
+    <div><button class="icon-only fade" title="Delete host..."  hx-confirm="Really delete host '{{hostname}}'?" hx-delete="{{url_for('api_delete_allowlist', hostname=hostname)}}" hx-target="closest .table-row"><img class="icon" src="{{ url_for('static', path='/icons/delete.svg') }}" height="1" width="1"></button></div>
+    <div>{{hostname}}</div>
+    <div><button class="icon-only fade" title="Edit host..."><img class="icon" src="{{ url_for('static', path='/icons/pen.svg') }}" height="1" width="1"></div>
+    <div class="allow-list-filters">
+        <button class="icon-only fade" style="margin-right: 0.5em;" title="Add Filter..." onclick="showNewAllowlistFilter(this, '{{hostname}}');"><img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"></button>
+    {% for r in rules -%}
+        {% with color=r.color, prefix=r.prefix, value=r.value, id=r.id -%}
+            {%- include "allowlist_rule.html.j2" with context -%}
+        {%- endwith %}
+    {%- endfor %}
+    </div>
+</div>

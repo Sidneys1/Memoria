@@ -1,0 +1,9 @@
+{%- for i in items %}
+    {% with hostname=i.hostname -%}
+        {%- include "denylist_item.html.j2" with context -%}
+    {%- endwith %}
+{% endfor %}
+{% if not limit or (items | length) == limit %}
+<div id="load-more" class="table-row" hx-trigger="revealed" hx-indicator="#indicator2" hx-get="{{url_for('api_denylist')}}?{% if limit %}skip={{skip+limit}}&limit={{limit}}{%endif%}" hx-target="#load-more" hx-swap="outerHTML">
+</div>
+{% endif -%}

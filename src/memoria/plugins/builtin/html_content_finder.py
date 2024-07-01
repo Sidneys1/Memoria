@@ -1,13 +1,10 @@
 import re
-from logging import getLogger
-from typing import Any
 from copy import deepcopy
+from logging import getLogger
 
 from bs4 import BeautifulSoup, Comment
 
-from memoria.plugins.base import Result
-
-from ..filter import Filter
+from memoria.plugins.processing import Filter, Result
 
 _LOG = getLogger(__spec__.name)
 

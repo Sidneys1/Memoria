@@ -1,0 +1,6 @@
+<div class="table-row">
+    <div>
+        <button class="has-icon" title="Delete host..."  hx-confirm="Really delete host '{{hostname}}'?" hx-delete="{{url_for('api_delete_denylist', hostname=hostname)}}" hx-target="closest .table-row"><img class="icon fade" src="{{ url_for('static', path='/icons/delete.svg') }}" height="1" width="1"></button>
+    </div>
+    <div>{{hostname}}</div>
+</div>

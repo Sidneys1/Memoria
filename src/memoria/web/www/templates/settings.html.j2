@@ -24,6 +24,31 @@
         helpContent.innerHTML = helpUploadContent.innerHTML;
         helpDialog.showModal();
     }
+
+    function showScrapingRulesHelp() {
+        helpContent.innerHTML = helpScrapingRulesContent.innerHTML;
+        helpDialog.showModal();
+    }
+
+    function showDenylistHelp() {
+        helpContent.innerHTML = helpDenylistContent.innerHTML;
+        helpDialog.showModal();
+    }
+
+    /*** Show edit @param {HTMLButtonElement} sender */
+    function showEditAllowlistFilter(sender, id, value) {
+        sender.closest('.rule').id = 'editing-allow-list-filter';
+        editScrapingRuleFilterId.value = id;
+        editScrapingRuleFilterValue.value = value;
+        editScrapingRuleFilterDialog.showModal();
+    }
+
+    /*** Show edit @param {HTMLButtonElement} sender */
+    function showNewAllowlistFilter(sender, hostname) {
+        sender.closest('.allow-list-filters').id = 'new-allow-list-filter';
+        newScrapingRuleFilterHostname.value = hostname;
+        newScrapingRuleFilterDialog.showModal();
+    }
 </script>
 {%- endblock%}
 
@@ -32,7 +57,7 @@
 <div>
     <h1>Settings</h1>
     <section>
-        <h2>Sources</h2>
+        <h2>History Sources</h2>
         <div id="sources-buttons">
             {# <button class="has-icon">
                 <img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"/>
@@ -52,32 +77,45 @@
             <li>Firefox Sync</li>
         </ul> #}
     </section>
-    {# <section>
-        <h2>Allowlist & Denylist</h2>
+    <section>
+        <h2>
+            Scraping Rules
+            <div style="font-size: small; font-weight: initial;" class="whats-this"><a href="#" onclick="showScrapingRulesHelp()" title="What's this?">What's this?</a></div>
+        </h2>
         <div id="lists-buttons">
-            <button class="has-icon">
+            <button class="has-icon" onclick="newScrapingRuleDialog.showModal();">
                 <img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"/>
                 <span>Add...</span>
             </button>
         </div>
         <div id="allowlist-table">
-            <div class="table-header">
-                <div>Host</div>
-                <div>Rules</div>
-            </div>
-            <div class="table-body">
-                <div class="table-row">
-                    <div>infosec.exchange</div>
-                    <div>
-                        <code class="allow">*</code>
-                        <code class="deny">r^/$</code>
-                        <code class="deny">/deck/</code>
-                        <a href="#" title="Add new Rule...">+</a>
-                    </div>
-                </div>
-            </div>
+            <div class="table-header"><div></div><div>Host</div><div></div><div>Filters</div></div>
+            <div id="allowlist-table-body" class="table-body" hx-indicator="#indicator" hx-get="{{ url_for('api_allowlist') }}?limit=100" hx-trigger="load once"></div>
         </div>
-    </section> #}
+        <div style="text-align: center;"><img style="margin: 0 auto;" id="indicator" class="htmx-indicator" src="{{ url_for('static', path='/oval.svg')}}" width="38" alt="" /></div>
+    </section>
+    <section>
+        <h2>
+            Blocked Hostnames
+            <div style="font-size: small; font-weight: initial;" class="whats-this"><a href="#" onclick="showDenylistHelp()" title="What's this?">What's this?</a></div>
+        </h2>
+        <div id="lists-buttons">
+            <button class="has-icon" onclick="newDenylistDialog.showModal();">
+                <img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"/>
+                <span>Add...</span>
+            </button>
+            {# <div class="sep"></div>
+            <button class="has-icon" onclick="newDenylistDialog.showModal();">
+                <img class="icon" src="{{ url_for('static', path='/icons/filter.svg') }}" height="1" width="1"/>
+                <span>Run Now...</span>
+            </button> #}
+        </div>
+        <div id="denylist-table">
+            <div class="table-header"><div></div><div>Host</div></div>
+            <div id="denylist-table-body" class="table-body" hx-indicator="#indicator2" hx-get="{{ url_for('api_denylist') }}?limit=100" hx-trigger="load once"></div>
+        </div>
+        <div style="text-align: center;"><img style="margin: 0 auto;" id="indicator2" class="htmx-indicator" src="{{ url_for('static', path='/oval.svg')}}" width="38" alt="" /></div>
+    </section>
 </div>
 <div></div>
 {% endblock %}
@@ -89,6 +127,58 @@
         <div id="help-content">Placeholder...</div>
         <div><button onclick="helpDialog.close()">Close</button></div>
     </dialog>
+
+    <dialog id="new-scraping-rule-dialog">
+        <h1>New Scraping Rule</h1>
+        <form id="new-scraping-rule-form" hx-post="{{url_for('api_new_allowlist')}}" hx-swap="afterbegin" hx-target="#allowlist-table-body">
+        <label for="new-scraping-rule-hostname">Hostname</label>
+        <input id="new-scraping-rule-hostname" placeholder="example.com" name="hostname">
+        <button id="new-scraping-rule-cancel" type="reset" onclick="newScrapingRuleDialog.close(); newScrapingRuleForm.reset();">Cancel</button>
+        <button id="new-scraping-rule-cancel" type="submit">Create</button>
+        </form>
+    </dialog>
+
+    <dialog id="new-denylist-dialog">
+        <h1>New Blocked Hostname</h1>
+        <form id="new-denylist-form" hx-post="{{url_for('api_new_denylist')}}" hx-swap="afterbegin" hx-target="#denylist-table-body">
+        <label for="new-denylist-hostname">Hostname</label>
+        <input id="new-denylist-hostname" placeholder="example.com" name="hostname">
+        <button id="new-denylist-cancel" type="reset" onclick="newDenylistDialog.close(); newDenylistForm.reset();">Cancel</button>
+        <button id="new-denylist-cancel" type="submit">Create</button>
+        </form>
+    </dialog>
+
+    <dialog id="edit-scraping-rule-filter-dialog">
+        <h1>Edit Filter...</h1>
+        <form id="edit-scraping-rule-filter-form" hx-put="{{url_for('api_put_allowlist_rule', id='{id}')}}" hx-target="#editing-allow-list-filter">
+        <input type="hidden" id="edit-scraping-rule-filter-id" name="id">
+        <label for="edit-scraping-rule-filter-value">Value</label>
+        <input id="edit-scraping-rule-filter-value" name="value">
+        <button id="edit-scraping-rule-filter-cancel" type="reset" onclick="editScrapingRuleFilterDialog.close(); editScrapingRuleFilterForm.reset();">Cancel</button>
+        <button id="edit-scraping-rule-filter-cancel" type="submit">Update</button>
+        </form>
+    </dialog>
+
+    <dialog id="new-scraping-rule-filter-dialog">
+        <h1>New Filter...</h1>
+        <form id="new-scraping-rule-filter-form" hx-post="{{url_for('api_post_allowlist_rule', hostname='{hostname}')}}" hx-target="#new-allow-list-filter" hx-swap="beforeend">
+        <input type="hidden" id="new-scraping-rule-filter-hostname" name="hostname">
+
+        <label for="new-scraping-rule-filter-type">Filter Type</label>
+        <select id="new-scraping-rule-filter-type" name="plugin_id">
+        {%- for plugin, options in plugins.items() %}
+            <option value="{{plugin}}">{{options['display_name']}}</option>
+        {% endfor -%}
+        </select>
+
+        <label for="new-scraping-rule-filter-value">Value</label>
+        <input id="new-scraping-rule-filter-value" name="value">
+
+        <button id="new-scraping-rule-filter-cancel" type="reset" onclick="newScrapingRuleFilterDialog.close(); newScrapingRuleFilterForm.reset();">Cancel</button>
+        <button id="new-scraping-rule-filter-cancel" type="submit">Add</button>
+        </form>
+    </dialog>
+
     <template id="help-upload-content">
         <div style="text-align: left;">
             <p>You can upload a raw History database from your browser.</p>
@@ -107,6 +197,62 @@
         </div>
     </template>
 
+    <template id="help-scraping-rules-content">
+        <div style="text-align: left;">
+            <p>
+                Scraping rules define which sites in your browsing history will be scraped for content. Each entry
+                consists of a website hostname and an optional set of filters matched against the full URL. When browsing
+                history is gathered it is first checked against the Blocked Hostsnames list, then against the Scraping Rules
+                until a rule is found that matches the URL.
+            </p>
+            <h2>Hostnames</h2>
+            <p>If no rules are found for a specific hostname (e.g., <code>docs.foo.example.com</code>) its parent
+                hostnames will be tried in order (e.g., <code>foo.example.com</code> then <code>example.com</code>) until a
+                match is found or all parent hostnames are exhausted.</p>
+            <p style="text-align: center;">
+                This diagram illustrates the different parts of a URL:
+            <div style="font-size: x-large; text-align: center;">
+                <samp>https://<ruby><span class="mgreen">docs.<ruby class="ruby-below" style="color: #62841f;">foo.<ruby
+                                    class="ruby-below" style="color: #445b16;">example.com<rt>Parent Hostname #2</rt></ruby>
+                                <rt>Parent Hostname #1</rt>
+                            </ruby></span>
+                        <rt class="mgreen">Hostname</rt><span class="morange">/about.html</span>
+                        <rt class="morange">Path</rt>
+                    </ruby></samp>
+            </div>
+            </p>
+            <h2>Filter Types</h2>
+            <p>Filters allow rules to be more specific than just matching a given hostname. What if you want to scrape
+                pages on <code>example.com</code>, but only if they are at a URL like <code>example.com/q/[…]</code> or
+                <code>example.com/questions/[…]</code>?
+            </p>
+            <div style="padding: 0 8ex;">
+                {% for identifier, (doc, doc_short, examples) in rule_plugin_docs.items() %}
+                <h3>{{plugins[identifier]['name']}} Filters</h3>
+                {{doc|safe}}
+                {% if examples %}
+                <dl>
+                {% for value, description in examples%}
+                    <dt><code>{{value}}</code></dt>
+                    <dd>{{description|safe}}</dd>
+                {%endfor%}
+                </dl>
+                {% endif %}
+                {%endfor%}
+            </div>
+        </div>
+    </template>
+
+    <template id="help-denylist-content">
+        <p>Blocked Hostnames allow you to configure web hosts that will never be
+            imported into Memoria's history storage, regardless of Scraping Rules or
+            other configuration.</p>
+        <p>Note that blocking a hostname like <code>example.com</code> will also
+            block all sub-domains (e.g., <code>www.example.com</code> or
+            <code>docs.example.com</code>). If you don't want to block all
+            sub-domains you'll need to block sub-domains individually.</p>
+    </template>
+
     <dialog id="progress-dialog">
         <h1 id="progress-label">Uploading</h1>
         <progress id="progress-bar" min="0" max="100"></progress>
@@ -116,9 +262,26 @@
     
 
     <script defer>
+        const newScrapingRuleDialog = document.getElementById('new-scraping-rule-dialog');
+        const newScrapingRuleForm = document.getElementById('new-scraping-rule-form');
+
+        const newScrapingRuleFilterDialog = document.getElementById('new-scraping-rule-filter-dialog');
+        const newScrapingRuleFilterForm = document.getElementById('new-scraping-rule-filter-form');
+        const newScrapingRuleFilterHostname = document.getElementById('new-scraping-rule-filter-hostname');
+
+        const editScrapingRuleFilterDialog = document.getElementById('edit-scraping-rule-filter-dialog');
+        const editScrapingRuleFilterForm = document.getElementById('edit-scraping-rule-filter-form');
+        const editScrapingRuleFilterId = document.getElementById('edit-scraping-rule-filter-id');
+        const editScrapingRuleFilterValue = document.getElementById('edit-scraping-rule-filter-value');
+
+        const newDenylistDialog = document.getElementById('new-denylist-dialog');
+        const newDenylistForm = document.getElementById('new-denylist-form');
+
         const helpDialog = document.getElementById('help-dialog');
         const helpContent = document.getElementById('help-content');
         const helpUploadContent = document.getElementById('help-upload-content');
+        const helpScrapingRulesContent = document.getElementById('help-scraping-rules-content');
+        const helpDenylistContent = document.getElementById('help-denylist-content');
 
         const progressDialog = document.getElementById('progress-dialog');
         const progressBar = document.getElementById('progress-bar');
@@ -130,6 +293,7 @@
             progressCloseButton.style.display = 'none';
             progressDialog.showModal();
         });
+
         htmx.on('#upload-form', 'htmx:xhr:progress', evt => {
             if (evt.detail.loaded === evt.detail.total) {
                 progressBar.removeAttribute('value');
@@ -139,9 +303,41 @@
             progressStatusText.innerText = `${iecSize(evt.detail.loaded)} / ${iecSize(evt.detail.total)}`;
             progressBar.setAttribute('value', evt.detail.loaded / evt.detail.total * 1000);
         });
+
         htmx.on('#upload-form', 'htmx:afterRequest', evt => {
             progressBar.style.display = 'none';
             progressCloseButton.style.display = 'initial';
+        });
+
+        htmx.on('#new-scraping-rule-form', 'htmx:afterRequest', evt => {
+            newScrapingRuleDialog.close();
+            newScrapingRuleForm.reset();
+        });
+
+        htmx.on('#new-denylist-form', 'htmx:afterRequest', evt => {
+            newDenylistDialog.close();
+            newDenylistForm.reset();
+        });
+
+        htmx.on('#edit-scraping-rule-filter-form', 'htmx:afterRequest', evt => {
+            editScrapingRuleFilterDialog.close();
+            editScrapingRuleFilterForm.reset();
+        });
+
+        htmx.on('#new-scraping-rule-filter-form', 'htmx:afterRequest', evt => {
+            newScrapingRuleFilterDialog.close();
+            newScrapingRuleFilterForm.reset();
+        });
+
+        document.body.addEventListener("htmx:configRequest", function (event) {
+            let pathWithParameters = event.detail.path.replace(/{([A-Za-z0-9_]+)}/g, function (_match, parameterName) {
+                let parameterValue = event.detail.parameters[parameterName]
+                delete event.detail.parameters[parameterName]
+
+                return parameterValue
+            })
+
+            event.detail.path = pathWithParameters
         });
     </script>
 

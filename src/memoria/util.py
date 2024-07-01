@@ -1,5 +1,42 @@
 import logging
 from collections import UserString
+from contextlib import AbstractAsyncContextManager, AbstractContextManager
+from contextvars import ContextVar, Token
+from typing import Generic, TypeVar
+
+
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+T = TypeVar('T')
+
+
+class set_context_var(AbstractContextManager, AbstractAsyncContextManager, Generic[T]):
+    def __init__(self, var: ContextVar[T], value: T) -> None:
+        self._var = var
+        self._value = value
+        self._token: None|Token[T] = None
+
+    def __enter__(self) -> T:
+        self._token = self._var.set(self._value)
+        return self._value
+
+    def __exit__(self, *_, **__) -> bool | None:
+        assert self._token is not None
+        self._var.reset(self._token)
+        return None
+
+    async def __aenter__(self) -> T:
+        return self.__enter__()
+
+    async def __aexit__(self, *args, **kwargs) -> bool | None:
+        return self.__exit__(*args, **kwargs)
+
 
 _CSI = "\033[%sm"
 RESET = _CSI % 0
@@ -79,32 +116,7 @@ class ColorFormatter(logging.Formatter):
 
 
 __all__ = [
-    'ColorStr',
-    'RESET',
-    'BOLD',
-    'DIM',
-    'ITALIC_OR_REVERSE',
-    'UNDERLINE',
-    'BLINK',
-    'REVERSE',
-    'CONCEAL',
-    'STRIKE',
-    'RED',
-    'BOLD_RED',
-    'GREEN',
-    'BOLD_GREEN',
-    'YELLOW',
-    'BOLD_YELLOW',
-    'BLUE',
-    'BOLD_BLUE',
-    'MAGENTA',
-    'BOLD_MAGENTA',
-    'CYAN',
-    'BOLD_CYAN',
-    'GREY',
-    'DARK_GREY',
-    'WHITE',
-    'ORANGE',
-    'BOLD_ORANGE',
-    'DEFAULT_COLOR'
+    'ColorStr', 'RESET', 'BOLD', 'DIM', 'ITALIC_OR_REVERSE', 'UNDERLINE', 'BLINK', 'REVERSE', 'CONCEAL', 'STRIKE',
+    'RED', 'BOLD_RED', 'GREEN', 'BOLD_GREEN', 'YELLOW', 'BOLD_YELLOW', 'BLUE', 'BOLD_BLUE', 'MAGENTA', 'BOLD_MAGENTA',
+    'CYAN', 'BOLD_CYAN', 'GREY', 'DARK_GREY', 'WHITE', 'ORANGE', 'BOLD_ORANGE', 'DEFAULT_COLOR'
 ]
