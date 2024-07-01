@@ -6,7 +6,6 @@ __dependencies__ = (
     "elasticsearch[async]~=8.13.1",
     "fasthx~=0.2403.1",
     "fastapi~=0.111.0",
-    "ijson~=3.2.3",
     "humanize~=4.9.0",
     "pydantic-settings~=2.2.1",
     "python-magic~=0.4.27",

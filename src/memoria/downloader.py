@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from queue import Queue
 
 from .model.imported_history import ImportedHistory
-from .plugins import PluginProcessor, PluginSuite, Result
+from .plugins import ProcessingPluginManager, PluginSuite, Result
 from .settings import SETTINGS
 
 _LOG = getLogger(__spec__.name)
@@ -34,7 +34,7 @@ async def _create_history_entry(session: 'AsyncSession', history: ImportedHistor
         session.add(SqlHistory(last_scrape=last_scrape, **history.model_dump(include={'url', 'title', 'last_visit'})))
 
 
-async def process_one(log: Logger, es: 'AsyncElasticsearch', sql_session: 'AsyncSession', processor: PluginProcessor,
+async def process_one(log: Logger, es: 'AsyncElasticsearch', sql_session: 'AsyncSession', processor: ProcessingPluginManager,
                       history: ImportedHistory) -> None:
     log.debug('Attempting to download `%s`', history.url)
 
@@ -86,7 +86,7 @@ async def process_one(log: Logger, es: 'AsyncElasticsearch', sql_session: 'Async
 
 async def worker(log: Logger, queue: 'Queue[ImportedHistory]', no_more: 'Event', canceled: 'Event') -> None:
     from .db_clients import create_elasticsearch_client, create_sql_client
-    processor = PluginSuite().create_processor()
+    processor = PluginSuite().create_processing_manager()
     es = await create_elasticsearch_client(SETTINGS.elastic_host,
                                            basic_auth=(SETTINGS.elastic_user, SETTINGS.elastic_password))
     async with create_sql_client() as sql_session, es, processor:

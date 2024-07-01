@@ -24,7 +24,6 @@ dependencies = [
     "fasthx~=0.2403.1",
     "fastapi~=0.111.0",
     "humanize~=4.9.0",
-    "ijson~=3.2.3",
     "pydantic-settings~=2.2.1",
     "python-magic~=0.4.27",
     "SQLAlchemy[asyncio]~=2.0.30"
@@ -46,6 +45,8 @@ dev = [
     "fastapi-cli",
     "isort",
     "mypy",
+    "types-aiofiles",
+    "types-beautifulsoup4",
 ]
 uvicorn = [
     "uvicorn",

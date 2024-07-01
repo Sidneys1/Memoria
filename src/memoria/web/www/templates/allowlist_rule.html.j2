@@ -1,0 +1,11 @@
+<div class="rule">
+    <span style="--pill-color: {{color}};">
+    {%- if prefix -%}
+        <span class="pill-left">{{prefix}}</span><span class="pill-right pill-hollow">{% if value.startswith(prefix) %}{{ value[prefix | length:] }}{% else %}<samp>{{value}}</samp>{% endif %}</span>
+    {%- else -%}
+        <span class="pill">{{value}}</span>
+    {%- endif -%}
+    </span>
+    <button class="icon-only clear fade" style="font-size: smaller;" title="Edit filter." onclick="showEditAllowlistFilter(this, {{id}}, '{{value}}')"><img class="icon" src="{{ url_for('static', path='/icons/note.svg') }}" height="1" width="1">
+    <button class="icon-only clear fade" style="font-size: smaller; margin-left: 0.25em" title="Delete filter." hx-confirm="Really delete filter '{{value}}'?" hx-delete="{{url_for('api_delete_allowlist_rule', id=id)}}" hx-target="closest .rule" hx-swap="outerHTML"><img class="icon" src="{{ url_for('static', path='/icons/delete.svg') }}" height="1" width="1">
+</div>
