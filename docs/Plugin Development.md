@@ -10,6 +10,7 @@ Plugin Development
   * 💾 [§ Downloaders](#downloaders)
   * ⚗️ [§ Filters](#filters)
   * 🔤 [§ Extractors](#extractors)
+* ⚗️ [§ Scraping Rule Filtering](#scraping-rule-filtering)
 
 A plugin is any Python class implementing one or more [plugin types](#plugin-functionalities) that is exported as an
 [importlib entrypoint][ep] in the `memoria` group.
@@ -106,3 +107,15 @@ content-type.
 [dl]: ../src/memoria/plugins/downloader.py
 [fl]: ../src/memoria/plugins/filter.py
 [ex]: ../src/memoria/plugins/extractor.py
+
+### Scraping Rule Filtering
+
+When Memoria ingests history items it must decide for each item whether to scrape and index the URL.
+This decision is managed by the Scraping Rules section of the Settings UI.
+For each Host configured in the Scraping Rules there can be optional 'filters', that cause the rule to only apply if the
+filters are met.
+Different types of filters are provided by the `AllowlistRule` plugin type. These plugins provide a `matches` function
+that is used to determine whether a given URL matches a specific filter value.
+
+For example, a "prefix" filter could have a value of `/login`, and checks that the path component of a URL starts with
+"`/login`".
