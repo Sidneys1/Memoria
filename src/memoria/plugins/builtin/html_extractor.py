@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup, PageElement, Tag
 
-from ..extractor import Extractor, Result
+from memoria.plugins.processing import Extractor, Result
 
 ALLOWED_META = ('author', 'description')
 

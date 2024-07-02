@@ -4,8 +4,7 @@ from typing import TYPE_CHECKING, Any, Coroutine, Self
 if TYPE_CHECKING:
     from aiohttp import ClientSession
 
-from ..base import Result
-from ..downloader import Downloader
+from memoria.plugins.processing import Plugin, Downloader, Result
 
 HEADERS = {
     'User-Agent':

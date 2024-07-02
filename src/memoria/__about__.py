@@ -1,4 +1,4 @@
-__version__ = "v0.1"
+__version__ = "v0.2"
 __description__ = """A selfhosted service for indexing and searching personal web history."""
 __authors__ = [{'name': 'Sidneys1', 'email': 'sidneys1@proton.me'}]
 
