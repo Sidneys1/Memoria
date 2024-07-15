@@ -1,0 +1,7 @@
+<div class="table-row">
+    <div><button class="icon-only fade" title="Delete history source..."  hx-confirm="Really delete history source '{{display_name|striptags}}'?" hx-delete="{{url_for('api_delete_source', id=id)}}" hx-target="closest .table-row"><img class="icon" src="{{ url_for('static', path='/icons/delete.svg') }}" height="1" width="1"></button></div>
+    <div>{{display_name|safe}}</div>
+    <div><button class="icon-only fade" title="Edit history source..."><img class="icon" src="{{ url_for('static', path='/icons/pen.svg') }}" height="1" width="1"></div>
+    <div>{{display_schedule|safe}}</div>
+    <div><input class="toggle" type="checkbox" {% if enabled %}checked{% endif %}></div>
+</div>

@@ -24,9 +24,12 @@ dependencies = [
     "fasthx~=0.2403.1",
     "fastapi~=0.111.0",
     "humanize~=4.9.0",
+    "ijson~=3.2.3",
     "pydantic-settings~=2.2.1",
     "python-magic~=0.4.27",
-    "SQLAlchemy[asyncio]~=2.0.30"
+    "rocketry~=2.5.1",
+    "SQLAlchemy[asyncio]~=2.0.30",
+    "websockets~=12.0"
 ]
 dynamic = ["version", "description", "authors"]
 
@@ -38,6 +41,9 @@ Repository = "https://github.com/Sidneys1/Memoria"
 AiohttpDownloader = "memoria.plugins.builtin.aiohttp_downloader:AiohttpDownloader"
 HtmlContentFinder = "memoria.plugins.builtin.html_content_finder:HtmlContentFinder"
 HtmlExtractor = "memoria.plugins.builtin.html_extractor:HtmlExtractor"
+PrefixAllowlistRule = "memoria.plugins.builtin.prefix_allowlistrule:PrefixAllowlistRule"
+RegexAllowlistRule = "memoria.plugins.builtin.regex_allowlistrule:RegexAllowlistRule"
+FirefoxSyncClientSource = "memoria.plugins.builtin.firefox_sync_client_source:FirefoxSyncClientSource"
 
 [project.optional-dependencies]
 dev = [

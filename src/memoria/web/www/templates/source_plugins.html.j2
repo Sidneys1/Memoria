@@ -1,0 +1,7 @@
+{%- for plugin in items -%}
+<input id="plugin-{{loop.counter}}" type="radio" name="id" value="{{plugin.id}}" required>
+<label for="plugin-{{loop.counter}}">
+    <h1>{{plugin.display_name}}</h1>
+    {{plugin.description|safe}}
+</label>
+{%- endfor -%}

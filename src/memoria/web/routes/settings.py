@@ -9,8 +9,9 @@ async def settings():
     suite = PluginSuite()
     plugins = {}
     docs = {}
-    for plugin in (x for x in suite._plugins.values() if issubclass(x, AllowlistRule)):
-        ident = plugin.identifier
+    for plugin in suite.get_plugins_of_type(AllowlistRule):
+        ident = plugin.short_name
+        plugin = plugin.type
         if plugin.DISPLAY_OPTIONS is not None:
             plugins[ident] = {'display_name': plugin.DISPLAY_OPTIONS.display_name or ident, 'color': plugin.DISPLAY_OPTIONS.color, 'prefix': plugin.DISPLAY_OPTIONS.prefix}
         else:

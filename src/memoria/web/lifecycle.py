@@ -8,5 +8,6 @@ if TYPE_CHECKING:
 @asynccontextmanager
 async def lifespan(_: 'FastAPI'):
     from .db_dependencies import es_lifecycle, sqlalchemy_lifecycle
-    async with es_lifecycle(), sqlalchemy_lifecycle():
+    # from ..tasks import tasks_lifecycle
+    async with es_lifecycle(), sqlalchemy_lifecycle():  #, tasks_lifecycle():
         yield

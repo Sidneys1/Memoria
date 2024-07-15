@@ -49,7 +49,52 @@
         newScrapingRuleFilterHostname.value = hostname;
         newScrapingRuleFilterDialog.showModal();
     }
+
+    function closeNewSourceDialog() {
+        newSourceDialog.close();
+        newSourceDialog.innerHTML = "";
+        newSourceDialog.removeAttribute("hx-ext");
+        newSourceDialog.removeAttribute("ws-connect");
+        htmx.process(newSourceDialog);
+    }
+
+    function onNewSourceClose(event) {
+        const closeEvent = event.detail.event;
+        console.debug(closeEvent);
+        if (closeEvent.code === 1000) {
+            // Success!
+            closeNewSourceDialog();
+            htmx.trigger('#sources-table-body', 'reload-sources');
+        } else if (closeEvent.code === 1005) {
+            // Closed from the client-side (e.g., clicked cancel)
+        } else {
+            document.getElementById('new-source-submit').remove();
+            document.getElementById('form-contents').outerHTML = 
+                `<div id="form-contents" style="grid-column:1/3;">${closeEvent.reason}</div>`;
+        }
+    }
+
+    function onNewSourceError(event) {
+        console.error(event.detail.error);
+    }
+
+    function showNewSourceDialog() {
+        newSourceDialog.innerHTML = "";
+
+        /** @type {HTMLTemplateElement} */
+        const template = document.getElementById('new-source-template');
+        newSourceDialog.appendChild(document.adoptNode(template.content.cloneNode(true)));
+
+        newSourceDialog.setAttribute("hx-ext","ws");
+        newSourceDialog.setAttribute("ws-connect","{{url_for('source_create')}}");
+        {# newSourceDialog.setAttribute("hx-on:htmx:ws-error","onError(event);");
+        newSourceDialog.setAttribute("hx-on:htmx:ws-close","onClose(event);"); #}
+
+        htmx.process(newSourceDialog);
+        newSourceDialog.showModal();
+    }
 </script>
+<script src="https://unpkg.com/htmx-ext-ws@2.0.0/ws.js"></script>
 {%- endblock%}
 
 {% block content %}
@@ -59,11 +104,11 @@
     <section>
         <h2>History Sources</h2>
         <div id="sources-buttons">
-            {# <button class="has-icon">
+            <button class="has-icon" onclick="showNewSourceDialog()">
                 <img class="icon" src="{{ url_for('static', path='/icons/doc-add.svg') }}" height="1" width="1"/>
                 <span>Add...</span>
             </button>
-            <div class="sep"></div> #}
+            <div class="sep"></div>
             <form id="upload-form" hx-post="{{ url_for('api_upload_db') }}" hx-encoding='multipart/form-data' hx-target="#progress-status" hx-trigger="input from:#file">
                 <input id="file" type="file" name="file">
                 <label for="file" class="has-icon" title="Manually upload a browser history database file.">
@@ -73,9 +118,13 @@
                 <span class="whats-this">(<a href="#" onclick="showUploadHelp()" title="What's this?">what's this?</a>)</span>
             </form>
         </div>
-        {# <ul>
-            <li>Firefox Sync</li>
-        </ul> #}
+        {# <ol id="sources-list" hx-indicator="#indicator-sources" hx-get="{{ url_for('api_sources') }}?limit=100" hx-trigger="load once,reload-sources" hx-swap="afterbegin"></div>
+        </ol> #}
+        <div id="sources-table">
+            <div class="table-header"><div></div><div>Type</div><div></div><div>Schedule</div><div>Enabled</div></div>
+            <div id="sources-table-body" class="table-body" hx-indicator="#indicator-sources" hx-get="{{ url_for('api_sources') }}?limit=100" hx-trigger="load once,reload-sources" hx-swap="afterbegin"></div>
+        </div>
+        <div style="text-align: center;"><img style="margin: 0 auto;" id="indicator-sources" class="htmx-indicator" src="{{ url_for('static', path='/oval.svg')}}" width="38" alt="" /></div>
     </section>
     <section>
         <h2>
@@ -128,13 +177,28 @@
         <div><button onclick="helpDialog.close()">Close</button></div>
     </dialog>
 
+    <dialog id="new-source-dialog" hx-on:htmx:ws-error="onNewSourceError(event);" hx-on:htmx:ws-close="onNewSourceClose(event);">
+    </dialog>
+
+    <template id="new-source-template">
+        <h1>New History Source</h1>
+        <form id="new-source-form" ws-send>
+            <fieldset id="form-contents" hx-get="{{url_for('source_plugins')}}" hx-swap="beforeend" hx-trigger="load once">
+                <legend>Select a Source</legend>
+            </fieldset>
+
+            <button id="new-source-cancel" type="reset" onclick="closeNewSourceDialog();">Cancel</button>
+            <button id="new-source-submit" type="submit">Create</button>
+        </form>
+    </template>
+
     <dialog id="new-scraping-rule-dialog">
         <h1>New Scraping Rule</h1>
-        <form id="new-scraping-rule-form" hx-post="{{url_for('api_new_allowlist')}}" hx-swap="afterbegin" hx-target="#allowlist-table-body">
-        <label for="new-scraping-rule-hostname">Hostname</label>
-        <input id="new-scraping-rule-hostname" placeholder="example.com" name="hostname">
-        <button id="new-scraping-rule-cancel" type="reset" onclick="newScrapingRuleDialog.close(); newScrapingRuleForm.reset();">Cancel</button>
-        <button id="new-scraping-rule-cancel" type="submit">Create</button>
+        <form id="new-scraping-rule-form">
+            <label for="new-scraping-rule-hostname">Hostname</label>
+            <input id="new-scraping-rule-hostname" placeholder="example.com" name="hostname">
+            <button id="new-scraping-rule-cancel" type="reset" onclick="newScrapingRuleDialog.close(); newScrapingRuleForm.reset();">Cancel</button>
+            <button id="new-scraping-rule-cancel" type="submit">Create</button>
         </form>
     </dialog>
 
@@ -259,9 +323,12 @@
         <div id="progress-status">Placeholder...</div>
         <div><button id="progress-close-button" onclick="progressDialog.close()">Close</button></div>
     </dialog>
-    
 
     <script defer>
+        /** @type {HTMLDialogElement} */
+        const newSourceDialog = document.getElementById('new-source-dialog');
+        const newSourceForm = document.getElementById('new-source-form');
+
         const newScrapingRuleDialog = document.getElementById('new-scraping-rule-dialog');
         const newScrapingRuleForm = document.getElementById('new-scraping-rule-form');
 

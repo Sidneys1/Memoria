@@ -7,11 +7,10 @@ from dataclasses import dataclass
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
 
-from . import Plugin, Html
+from . import Plugin, Html, PluginId
 
 type Url = str
 Hostname = NewType('Hostname', str)
-PluginId = NewType('PluginId', str)
 type InputItem = tuple[Hostname, Url, 'ParseResult']
 
 
@@ -22,7 +21,7 @@ class AllowlistRule(Plugin, ABC):
         prefix: str|None = None
         display_name: str|None = None
 
-    DISPLAY_OPTIONS: ClassVar[DisplayOptions|None] = None
+    DISPLAY_OPTIONS: ClassVar[DisplayOptions] = DisplayOptions()
     """Used for UI/UX display purposes. Can be `None`."""
 
     LONG_DOCUMENTATION: ClassVar[Html|None] = None
