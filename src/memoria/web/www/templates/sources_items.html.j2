@@ -1,0 +1,9 @@
+{%- for i in items %}
+    {% with display_name=i.display_name, id=i.id, enabled=i.enabled, display_schedule=i.display_schedule, can_run_on_demand=i.can_run_on_demand -%}
+        {%- include "source_item.html.j2" with context -%}
+    {%- endwith %}
+{% endfor %}
+{% if not limit or (items | length) == limit %}
+<div id="load-more-sources" hx-trigger="revealed" hx-indicator="#indicator-sources" hx-get="{{url_for('api_sources')}}?{% if limit %}skip={{skip+limit}}&limit={{limit}}{%endif%}" hx-target="#load-more-sources" hx-swap="outerHTML">
+</div>
+{% endif -%}

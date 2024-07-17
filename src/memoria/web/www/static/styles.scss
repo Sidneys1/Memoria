@@ -123,8 +123,13 @@ h6 {
     width: 1em;
     height: 1em;
 
-    &:not(:only-child:last-child) {
-        margin-right: 0.25em;
+    &:not(:only-child){
+        &:not(:last-child) {
+            margin-right: 0.25em;
+        }
+        &:not(:first-child) {
+            margin-left: 0.25em;
+        }
     }
 
     &.big {
@@ -334,4 +339,48 @@ dialog {
 
 .morange {
     color: #ac6218;
+}
+
+:root {
+    --toggle-height: 1.25em;
+    --toggle-width: calc(var(--toggle-height) * 2);
+    --toggle-gap: 2px;
+}
+
+input[type=checkbox].toggle {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+    display: none;
+    + label {
+        cursor: pointer;
+        text-indent: -9999px;
+        width: var(--toggle-width);
+        height: var(--toggle-height);
+        background: grey;
+        display: block;
+        border-radius: var(--toggle-height);
+        position: relative;
+        transition: background-color 0.3s;
+    
+        &:after {
+            content: '';
+            position: absolute;
+            top: var(--toggle-gap);
+            left: var(--toggle-gap);
+            width: calc(var(--toggle-height) - (var(--toggle-gap) * 2));
+            height: calc(var(--toggle-height) - (var(--toggle-gap) * 2));
+            background: #fff;
+            border-radius: calc(var(--toggle-height) - (var(--toggle-gap) * 2));
+            transition: left 0.3s;
+            // text-indent: initial;
+        }
+    }
+    &:checked + label {
+        background-color: #bada55;
+        &:after {
+            left: calc(100% - (var(--toggle-gap) + calc(var(--toggle-height) - (var(--toggle-gap) * 2))));
+            // transform: translateX(-100%);
+        }
+    }
 }

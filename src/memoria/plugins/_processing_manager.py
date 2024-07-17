@@ -1,11 +1,12 @@
 from contextlib import AbstractAsyncContextManager
 from itertools import chain, pairwise
 from logging import getLogger
-from typing import Callable, Coroutine, Iterable, Self
+from typing import Callable, Coroutine, Self
 
 from ..model.imported_history import ImportedHistory
 from ..settings import SETTINGS
 from .processing import Downloader, Extractor, Filter, Plugin, Result
+from ._plugin_suite import PluginSuite
 
 
 def _get_plugin_subclass(clazz: type) -> str:
@@ -31,8 +32,17 @@ class ProcessingPluginManager(AbstractAsyncContextManager):
     filters: list[Filter]
     _LOG = getLogger(__spec__.name + '.PluginProcessor')
 
-    def __init__(self, downloader: type[Downloader], extractor: type[Extractor],
-                 filters: Iterable[type[Filter]]) -> None:
+    def __init__(self) -> None:
+        suite = PluginSuite()
+        downloader = suite.get_plugin_by_short_name(SETTINGS.downloader)
+        assert downloader is not None and issubclass(downloader.type, Downloader)
+        downloader = downloader.type
+        extractor = suite.get_plugin_by_short_name(SETTINGS.extractor)
+        assert extractor is not None and issubclass(extractor.type, Extractor)
+        extractor = extractor.type
+        filters = (x.type for x in
+                   (suite.get_plugin_by_short_name(name) for name in SETTINGS.filter_stack)
+                  if x is not None and issubclass(x.type, Filter))
         errors = []
 
         if not issubclass(downloader, Downloader):
@@ -60,7 +70,7 @@ class ProcessingPluginManager(AbstractAsyncContextManager):
                                f"plugin only produces [`{'`, `'.join(c_type)}`]."))
                 continue
 
-            _LOG.debug("\tFilter #%d: `%s` [`%s`] -> [`%s`]", i, filter_.__name__,
+            self._LOG.debug("\tFilter #%d: `%s` [`%s`] -> [`%s`]", i, filter_.__name__,
                        '`, `'.join(c_type.intersection(filter_.accept)), '`, `'.join(filter_.content_types))
             c_type = filter_.content_types
 
@@ -80,7 +90,7 @@ class ProcessingPluginManager(AbstractAsyncContextManager):
         self.extractor = extractor()
         self.filters = [f() for f in filters]
 
-        if not c_type.intersection(self.extractor.accept):
+        if c_type is not None and not c_type.intersection(self.extractor.accept):
             errors.append(
                 ValueError(f"Filter stack produces [`{'`, `'.join(c_type)}`], but selected Extractor "
                            f"`{SETTINGS.extractor}` only accepts [`{'`, `'.join(extractor.accept)}`]."))

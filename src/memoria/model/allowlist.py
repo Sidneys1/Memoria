@@ -21,16 +21,12 @@ class AllowlistRule(BaseModel):
 
     @staticmethod
     @lru_cache
-    def _get_options(plugin_id: str) -> AllowlistPlugin.DisplayOptions|None:
+    def _get_options(plugin_id: str) -> AllowlistPlugin.DisplayOptions:
         from ..plugins._plugin_suite import PluginSuite
         from ..plugins.allowlist import AllowlistRule
-        suite = PluginSuite()
-        for plugin in suite._plugins.values():
-            if not issubclass(plugin, AllowlistRule): continue
-            if plugin.identifier != plugin_id: continue
-            if (options := plugin.DISPLAY_OPTIONS) is None:
-                return None
-            return options
+        plugin = PluginSuite().get_plugin_by_short_name(plugin_id + "AllowlistRule")
+        assert plugin is not None and issubclass(plugin.type, AllowlistRule), f"{plugin_id}"
+        return plugin.type.DISPLAY_OPTIONS
 
     class Config:
         from_attributes = True

@@ -62,5 +62,6 @@ class CrudBase(AsyncAttrs, DeclarativeBase):
 from .history import *
 from .page import *
 from .allowlist import *
+from .configured_source import *
 
 __all__ = tuple()
