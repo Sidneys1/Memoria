@@ -121,7 +121,7 @@
         {# <ol id="sources-list" hx-indicator="#indicator-sources" hx-get="{{ url_for('api_sources') }}?limit=100" hx-trigger="load once,reload-sources" hx-swap="afterbegin"></div>
         </ol> #}
         <div id="sources-table">
-            <div class="table-header"><div></div><div>Type</div><div></div><div>Schedule</div><div>Enabled</div></div>
+            <div class="table-header"><div></div><div>Source</div><div></div><div>Schedule</div><div></div><div>Enabled</div></div>
             <div id="sources-table-body" class="table-body" hx-indicator="#indicator-sources" hx-get="{{ url_for('api_sources') }}?limit=100" hx-trigger="load once,reload-sources" hx-swap="afterbegin"></div>
         </div>
         <div style="text-align: center;"><img style="margin: 0 auto;" id="indicator-sources" class="htmx-indicator" src="{{ url_for('static', path='/oval.svg')}}" width="38" alt="" /></div>

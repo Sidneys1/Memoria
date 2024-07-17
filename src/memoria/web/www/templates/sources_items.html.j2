@@ -1,5 +1,5 @@
 {%- for i in items %}
-    {% with display_name=i.display_name, id=i.id, enabled=i.enabled, display_schedule=i.display_schedule -%}
+    {% with display_name=i.display_name, id=i.id, enabled=i.enabled, display_schedule=i.display_schedule, can_run_on_demand=i.can_run_on_demand -%}
         {%- include "source_item.html.j2" with context -%}
     {%- endwith %}
 {% endfor %}

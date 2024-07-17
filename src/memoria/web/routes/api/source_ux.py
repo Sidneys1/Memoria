@@ -6,7 +6,7 @@ import json
 from fastapi import Form, Response, WebSocket, HTTPException, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 
-from ....plugins.source import Source, Html, UxHost
+from ....plugins.source import Source, Html, UxHost, PluginSchedule
 from ....plugins._plugin_suite import PluginSuite
 from ....model.plugins import SourcePlugin
 from ....model.orm.configured_source import ConfiguredSource
@@ -76,6 +76,57 @@ class Ux(UxHost):
             del ret['HEADERS']
         return cast('JsonValue', ret)
 
+_RUN_ON = """<label for="form-source-schedule">Run on</label><select id="form-source-schedule" name="schedule_type">{options}</select>"""
+
+_SCHEDULE_FORM = """<div id="form-contents" style="display: grid; grid-column: 1/3; grid-template-columns: subgrid; gap: 0.5em 1em;">
+    <label for="form-source-enabled">Enabled</label>
+    <input id="form-source-enabled" name="enabled" type="checkbox" style="justify-self: left;">
+
+    {run_on}
+
+    <label for="form-source-timer">Timer</label>
+    <div>Every <input id="form-source-timer" name="timer" type="number" value="60" min="15" max="1440"> minutes.</div>
+
+    <h2 style="grid-column: 1/3;">Schedule</h2>
+    <div style="grid-column: 1/3;">At <select>
+        <option>Midnight</option>
+        <option>1 AM</option>
+        <option>2 AM</option>
+        <option>3 AM</option>
+        <option>4 AM</option>
+        <option>5 AM</option>
+        <option>6 AM</option>
+        <option>7 AM</option>
+        <option>8 AM</option>
+        <option>9 AM</option>
+        <option>10 AM</option>
+        <option>11 AM</option>
+        <option selected>Noon</option>
+        <option>1 PM</option>
+        <option>2 PM</option>
+        <option>3 PM</option>
+        <option>4 PM</option>
+        <option>5 PM</option>
+        <option>6 PM</option>
+        <option>7 PM</option>
+        <option>8 PM</option>
+        <option>9 PM</option>
+        <option>10 PM</option>
+        <option>11 PM</option>
+    </select> <select>
+        <option>every day</option>
+        <option>on weekdays</option>
+        <option>on weekends</option>
+        <option>on Sundays</option>
+        <option>on Mondays</option>
+        <option>on Tuesdays</option>
+        <option>on Wednesdays</option>
+        <option>on Thursdays</option>
+        <option>on Fridays</option>
+        <option>on Saturdays</option>
+    </select>.</div>
+</div>"""
+
 @API.websocket("/plugins/sources/create")
 async def source_create_websocket(ws: WebSocket, session: SqlSession):
     try:
@@ -92,12 +143,34 @@ async def source_create_websocket(ws: WebSocket, session: SqlSession):
             await ws.close()
             return
 
+        ux = Ux(ws)
+        options = ""
+        for value in plugin.type.SUPPORTED_SCHEDULES:
+            match value:
+                case PluginSchedule.OnDemand | PluginSchedule.Continuous:
+                    continue
+                case PluginSchedule.Intermittent:
+                    options += f'<option value="{value.value}">a Timer</option>'
+                case PluginSchedule.Scheduled:
+                    options += f'<option value="{value.value}">a Schedule</option>'
+        form  = _SCHEDULE_FORM
+        run_on = ""
+        if options:
+            run_on = _RUN_ON.format(options=options)
+
+        form = form.format(run_on=run_on)
+
+        values = await ux.update_dialog(form)
+        print(values)
+        await ux.done()
+        return
+
         if plugin.type.UX_CONFIG.create is None:
             # No workflow.
-            await ws.send_text(f"""<div id="new-source-form">done</div>""")
+            # await ws.send_text(f"""<div id="new-source-form">done</div>""")
+            await ux.done()
             return
 
-        ux = Ux(ws)
 
         try:
             display_name, config = await plugin.type.UX_CONFIG.create(ux)

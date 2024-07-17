@@ -1,7 +1,13 @@
 <div class="table-row">
     <div><button class="icon-only fade" title="Delete history source..."  hx-confirm="Really delete history source '{{display_name|striptags}}'?" hx-delete="{{url_for('api_delete_source', id=id)}}" hx-target="closest .table-row"><img class="icon" src="{{ url_for('static', path='/icons/delete.svg') }}" height="1" width="1"></button></div>
     <div>{{display_name|safe}}</div>
-    <div><button class="icon-only fade" title="Edit history source..."><img class="icon" src="{{ url_for('static', path='/icons/pen.svg') }}" height="1" width="1"></div>
+    <div><button class="icon-only fade" title="Edit history source..."><img class="icon" src="{{ url_for('static', path='/icons/pen.svg') }}" height="1" width="1"></button></div>
     <div>{{display_schedule|safe}}</div>
-    <div><input class="toggle" type="checkbox" {% if enabled %}checked{% endif %}></div>
+    <div>
+      {%- if can_run_on_demand -%}
+        {# <button class="icon-only fade" title="Run now...">Run Now <img class="icon" src="{{ url_for('static', path='/icons/play.svg') }}" height="1" width="1"></button> #}
+        <a class="has-icon" style="cursor: pointer;"><span>Run Now</span><img class="icon" src="{{ url_for('static', path='/icons/play.svg') }}" height="1" width="1" /></a>
+      {%- endif -%}
+    </div>
+    <div><form><input id="source-enabled-{{id}}" class="toggle" type="checkbox" {% if enabled %}checked{% endif %}><label for="source-enabled-{{id}}" style="margin: 0 auto;">Toggle</label></form></div>
 </div>

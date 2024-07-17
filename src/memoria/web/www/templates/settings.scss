@@ -235,8 +235,9 @@ ruby {
     grid-template-columns: auto 1fr;
     text-align: left;
 
-    label {
+    > label, :not(fieldset) label {
         grid-column: 1;
+        text-align: right;
     }
     input {
         grid-column: 2;
@@ -296,7 +297,13 @@ ruby {
                 margin-bottom: 0.25em;
             }
         }
+    }
 
+    #form-source-schedule[value="2"] {
+        margin: 2em;
+    }
+    #form-source-schedule[value="4"] {
+        color: blue;
     }
 }
 
@@ -385,11 +392,11 @@ ruby {
 #sources-table {
     width: 100%;
     display: grid;
-    grid-template-columns: auto auto auto 1fr auto;
+    grid-template-columns: auto auto auto 1fr auto auto;
 
     > .table-footer {
         border-top: 2px solid #999;
-        grid-column: 1 / 6;
+        grid-column: 1 / 7;
         > a {
             display: block;
             margin: 0 auto;
@@ -403,7 +410,7 @@ ruby {
     }
     > .table-header, .table-body, .table-row {
         display: grid;
-        grid-column: 1 / 6;
+        grid-column: 1 / 7;
         grid-template-columns: subgrid;
     }
 
@@ -442,6 +449,15 @@ ruby {
         font-style: italic;
         // border-left: none;
         font-size: smaller;
+    }
+
+    .table-row > :nth-child(5) {
+        border-left: none;
+        font-size: smaller;
+    }
+
+    .table-row > :nth-child(6) {
+        text-align: center;
     }
 
     .table-row + .table-row {

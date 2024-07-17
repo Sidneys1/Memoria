@@ -20,6 +20,7 @@ dependencies = [
     "aiohttp~=3.9.5",
     "aiosqlite~=0.20.0",
     "beautifulsoup4~=4.12.3",
+    "cron-descriptor~=1.4.3",
     "elasticsearch[async]~=8.13.1",
     "fasthx~=0.2403.1",
     "fastapi~=0.111.0",

@@ -20,14 +20,15 @@ async def main() -> None:
     from memoria.plugins import PluginSchedule
     from memoria.plugins._source_manager import SourcePluginManager
     from memoria.db_clients import create_sql_client
+    from memoria.plugins.source import PluginSchedule
 
     basicConfig(level=INFO)
 
     async with create_sql_client() as session:
         found: ConfiguredSource = await ConfiguredSource.find_one(session, ConfiguredSource.id == 1)  # type: ignore
         # found.display_name = 'Firefox Sync (<code>sidneys1@live.com</code>)'
-        # found.schedule = 2
-        # found.schedule_value = 60
+        found.schedule = PluginSchedule.Scheduled.value
+        found.schedule_value = '0 0 * * 0'
         # await session.delete(found)
 
         # new = ConfiguredSource(plugin_id='memoria.plugins.builtin.firefox_sync_client_source:FirefoxSyncClientSource', display_name='Firefox Sync: <samp>sidneys1@live.com</samp>', config='{}')
